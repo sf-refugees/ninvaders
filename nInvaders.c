@@ -1,69 +1,58 @@
 #include <stdio.h>
+//#include <stdlib.h>
+//#include <ncurses.h>
+//#include <signal.h>
 #include <string.h>
+#include <unistd.h>
 #include "nInvaders.h"
 #include "player.h"
 #include "aliens.h"
 #include "ufo.h"
+#ifndef true
+#define true 1
+#endif
+#ifndef false
+#define false 0
+#endif
 
-int lives;
-long score;
-
-
-/**
- * initialize level: reset attributes of most units
- */
-static void initLevel()
+void initlevel()
 {
 	playerReset();
 	aliensReset();
 	ufoReset();
 	bunkersReset();
 	render();
-	drawscore();
-}
-
-
-/**
- * evaluate command line parameters 
- */
-static void evaluateCommandLine(int argc, char **argv)
-{
-	
-	// -l : set skill level
-	if (argc == 3 && strcmp(argv[1], "-l") == 0) {
-		if (argv[2][0] >= '0' && argv[2][0] <= '9') {
-			skill_level = argv[2][0] - 48;
-		} else {
-			argc = 2;
-		}
-	}
-
-	// -gpl : show GNU GPL
-	if (argc == 2 && strcmp(argv[1], "-gpl") == 0) {
-		showGpl();
-	}
-
-	// wrong command line: show usage
-	if (argc == 2 || (argc == 3 && strcmp(argv[1], "-l") != 0)) {
-		showVersion();
-		showUsage();
-		exit(1);
-	}
 }
 
 
 static void finish(int sig)
 {
         endwin();
-	showGplShort();
-	
-	fprintf(stderr,"\n");
-	fprintf(stderr,"\n");
-	fprintf(stderr,"=========================================================================\n");
-	fprintf(stderr,"\n");
-	
-	fprintf(stderr,"Final score: %7.7ld, Final level: %2.2d\nFinal rating... ",score,level);
-	if (lives>0)
+fprintf(stderr,"\n");
+fprintf(stderr,"This program is free software; you can redistribute it and/or modify\n");
+fprintf(stderr,"it under the terms of the GNU General Public License as published by\n");
+fprintf(stderr,"the Free Software Foundation; either version 2 of the License, or\n");
+fprintf(stderr,"(at your option) any later version.\n");
+fprintf(stderr,"\n");
+fprintf(stderr,"This program is distributed in the hope that it will be useful,\n");
+fprintf(stderr,"but WITHOUT ANY WARRANTY; without even the implied warranty of\n");
+fprintf(stderr,"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n");
+fprintf(stderr,"GNU General Public License for more details.\n");
+fprintf(stderr,"\n");
+fprintf(stderr,"You should have received a copy of the GNU General Public License\n");
+fprintf(stderr,"along with this program; if not, write to the Free Software\n");
+fprintf(stderr,"Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n");
+fprintf(stderr,"\n");
+fprintf(stderr,"Use the -gpl  command line switch to see the full license of this program\n");
+fprintf(stderr,"Use the -help command line switch to see who wrote this program \n");
+fprintf(stderr,"\n");
+fprintf(stderr,"\n");
+fprintf(stderr,"\n");
+fprintf(stderr,"=========================================================================\n");
+fprintf(stderr,"\n");
+
+fprintf(stderr,"Final score: %7.7ld, Final level: %2.2d\nFinal rating... ",score,level);
+	if (p.lives>0)
 		fprintf(stderr,"Quitter\n\n");
 	else if(score<5000)
 		fprintf(stderr,"Alien Fodder\n\n");
@@ -79,7 +68,6 @@ static void finish(int sig)
 		fprintf(stderr,"Earth Defender\n\n");
 	else if(score>19999)
 		fprintf(stderr,"Supreme Protector\n\n");
-	
 	showVersion();
         exit(0);
 }
@@ -91,16 +79,49 @@ void game_over(int a)
 	int xo, yo;
 	xo = (SCREENWIDTH / 2) - (31 / 2);
 	yo = (SCREENHEIGHT / 2) - (13 / 2);
-	gameOverDisplay(xo, yo);
+	gameOverDisplay (xo, yo);
 	
-	doSleep(3*1000*1000);
+	sleep(4);
 	finish(0);
 }
 
+int hit_alien_test(int shotx, int shoty, int alienx, int alieny)
+{
+	int getroffen = 0;
+	int shipx, shipy = 0;
+	if (shotx >= alienx && shotx <= alienx + ALIENS_MAX_NUMBER_X * 3 - 1
+	    && shoty >= alieny && shoty <= alieny + (ALIENS_MAX_NUMBER_Y - 1) * 2) {
+		shipx = (shotx - alienx) / 3;
+		shipy = (shoty - alieny) / 2;
+		if (alienBlock[shipy][shipx] != 0) {
+			alienBlock[shipy][shipx] = 0;
+			getroffen = 1;
+		}
+	}
+	return getroffen;
+}
+
+int hit_bunker_test(int shotx, int shoty)
+{
+	int adjx, adjy;
+	if (shotx >= BUNKERX && shotx <= BUNKERX + BUNKERWIDTH
+	    && shoty >= BUNKERY && shoty <= BUNKERY + BUNKERHEIGHT) {
+		// the shot is in the range - do a detailed bunker collision test
+		adjy = shoty - BUNKERY; 
+		adjx = shotx - BUNKERX;
+		if (adjy <= BUNKERHEIGHT-1){ //todo: eingefuegt. abfrage ist sonst unsinnig, da speicher zufällig gemischt.
+			if(bunker[adjy][adjx] == 1){
+				bunker[adjy][adjx] = 0;
+				return 1; 
+			}
+		}
+	}
+	return 0;
+}
 
 void drawscore()
 {
-	statusDisplay(level, score, lives);
+	statusDisplay(level, score, p.lives);
 }
 
 
@@ -154,7 +175,7 @@ int readInput()
 
 	} else if (ch == 'L') {			// cheat: one more live
 
-		lives++;
+		p.lives++;
 		drawscore();
 		
 	} else if ((ch == 'q' || ch == 27)) {	// quit game
@@ -173,97 +194,130 @@ int readInput()
 
 int main(int argc, char **argv)
 {
-	int aliens_move_counter = 0; 
-	int aliens_shot_counter = 0;
-	int player_shot_counter = 0;
-	int ufo_move_counter = 0;
-	int gotoNextLevel = 0;
-	
-	// initialize variables 
-
+	int move_counter, shot_counter, ufo_move_counter;
+	int alienshot_counter;
+	int gotoNextLevel;
 	weite = 0;
-	score = 0;
-	lives = 3;
+
+	/* initialize variables */
+
+	score = 0L;
+	p.lives = 3;
 	skill_level = 1;
 
-	
-	evaluateCommandLine(argc, argv);	// evaluate command line parameters
-	graphicEngineInit();			// initialize graphic engine
-	
-			
+
+	/* evaluate command line parameters */
+
+	if (argc == 3 && strcmp(argv[1], "-l") == 0) {
+		if (argv[2][0] >= '0' && argv[2][0] <= '9') {
+			skill_level = argv[2][0] - 48;
+		} else {
+			argc = 2;
+		}
+	}
+
+	if (argc == 2 && strcmp(argv[1], "-gpl") == 0) {
+		showGpl();
+	}
+
+	if (argc == 2 || (argc == 3 && strcmp(argv[1], "-l") != 0)) {
+		showVersion();
+		showUsage();
+		exit(1);
+	}
 
 
-	// start game
+	/* initialize gaming field */
+
+	graphicEngineInit();
+	initlevel();
+
+
+
+
+	/* start game */
+
 	for (level = 1;; level++) {		
 
-		initLevel();			// initialize level
-		
-		
-		aliens_move_counter = 0; 
-		aliens_shot_counter = 0;
-		player_shot_counter = 0;
+		move_counter = 0; 
+		shot_counter = 0;
+		alienshot_counter = 0;
+		shootme_counter = 0;
 		ufo_move_counter = 0;
-	
-		
+
 		weite = (shipnum+(skill_level*10)-(level*5)+5)/10;
 
 		if (weite < 0) {
 			weite = 0;
 		}
 
+		/* display gaming field */
+		refreshScreen();	
+		drawscore();
 
-		// game loop 
+		/* game loop */
+
 		do {
 			gotoNextLevel=0;
-
-			// move aliens			
-			if (aliens_move_counter == 0 && aliensMove() == 1) {
-				// aliens reached player
-				lives = 0;
-				game_over(1);
+			
+			if (move_counter == 0) {
+				
+				// move aliens
+				if (aliensMove() == 1) {
+					// aliens reached player
+					p.lives = 0;
+					game_over(1);
+				}
 				
 			}
 			
-			// move player missile			
-			if (player_shot_counter == 0 && playerMoveMissile() == 1) {
-				// no aliens left
-				gotoNextLevel = 1;
-			}
-
-			// move aliens' missiles
-			if (aliens_shot_counter == 0 && aliensMissileMove() == 1) {
-				// player was hit
-				lives--;			// player looses one life
-				drawscore();	                // draw score
-				playerExplode();		// display some explosion graphics
-				if (lives == 0) {		// if no lives left ...
-					game_over(1);		// ... exit game
+			if (shot_counter == 0) {
+				
+				// move player missile and break to next level if no aliens left
+				if (playerMoveMissile() == 1) { 
+					gotoNextLevel = 1;
 				}
+
 			}
 
-			// move ufo
-			if (ufo_move_counter == 0 && ufoShowUfo() == 1) {
-				ufoMoveLeft();			// move it one position to the left
+			if (alienshot_counter == 0) {
+				
+				// move aliens' missiles and do action if player was hit
+				if (aliensMissileMove() == 1) {
+					// player was hit
+					p.lives--;			// player looses one life
+					drawscore();	                // draw score
+					playerExplode(p.posX, p.posY);	// display some explosion graphics
+					if (p.lives == 0) {		// if no lives left ...
+						game_over(1);		// ... exit game
+					}
+				}
+				
+			}
+
+			if (ufoShowUfo() == 1 && ufo_move_counter == 0) {
+				// if there's a ufo move it one position left
+				ufoMoveLeft();
 			}
 			
 			
-			if (aliens_shot_counter++ >= 5) {aliens_shot_counter=0;} // speed of alien shot
-			if (player_shot_counter++ >= 1) {player_shot_counter=0;}           // speed of player shot
-			if (aliens_move_counter++ >= weite) {aliens_move_counter=0;}       // speed of aliend
-			if (ufo_move_counter++ >= 10) {ufo_move_counter=0;}   // speed of ufo
+			if (alienshot_counter++ >= 5) {alienshot_counter=0;} // speed of alien shot
+			if (shot_counter++ >= 1) {shot_counter=0;}           // speed of player shot
+			if (move_counter++ >= weite) {move_counter=0;}       // speed of aliend
+			if (ufo_move_counter++ >= 3) {ufo_move_counter=0;}   // speed of ufo
 
-			refreshScreen();
+			playerDisplay(p.posX, p.posY);
+			refreshScreen();	
 
 			// do movements and key-checking; if cheat-warping goto next level
 			if (readInput() == 1) {
 				gotoNextLevel = 1;
 			}
-
 			
 		} while (gotoNextLevel == 0);
 
-
-	} // for (level...
+		initlevel();
+	}
 
 	return 0;
 	
@@ -272,13 +326,13 @@ int main(int argc, char **argv)
 
 void doScoring(int alienType)
 {
-	int points[4] = {500, 200, 150, 100};   	// 0: ufo, 1:red, 2:green, 3:blue
+	int points[4] = {100, 100, 100, 400};   // 0:blue, 1:green, 2:red, 3:ufo
 	
-	score += points[alienType];		// every alien type does different scoring points
+	score += points[alienType];		// every alien does 100pts
 	
 	// every 6000 pts player gets a new live
 	if (score % 6000 == 0){
-		lives++;
+		p.lives++;
 	}
 	
 	drawscore();	// display score
