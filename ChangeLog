@@ -1,3 +1,18 @@
+2003-04-08  Sebastian Gutsfeld  <segoh@gmx.net>
+
+	* ufo.c:replaced 'u' with 'ufo' (see ufo.h) and 'a' with 'aliens'
+
+	* ufo.h: added typedef for Ufo and renamed 'u' into 'ufo',
+
+	* player.c: added typedef for Player and renamed 'p' into 'player',
+	replaced 'p' with 'player and 'a' with 'aliens'
+
+	* aliens.c: replaced 'a' with 'aliens' (see aliens.h)
+
+	* aliens.h: added typedef for Aliens and renamed 'a' into 'aliens'
+
+	* globals.c (RELEASE): updated release number
+
 2003-04-07  Sebastian Gutsfeld  <segoh@gmx.net>
 
 	* view.c (ufoRefresh): reverted 'frame' assignement
