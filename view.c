@@ -276,7 +276,7 @@ void ufoRefresh()
 
 	wclear(wUfo);
         wattrset(wUfo,COLOR_PAIR(RED));
-	waddstr(wUfo, ufo[frame % 4]);
+	waddstr(wUfo, ufo[frame%=4]);
 
 	frame++;
 }

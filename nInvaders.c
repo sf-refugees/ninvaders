@@ -250,7 +250,7 @@ int main(int argc, char **argv)
 			if (aliens_shot_counter++ >= 5) {aliens_shot_counter=0;} // speed of alien shot
 			if (player_shot_counter++ >= 1) {player_shot_counter=0;}           // speed of player shot
 			if (aliens_move_counter++ >= weite) {aliens_move_counter=0;}       // speed of aliend
-			if (ufo_move_counter++ >= 3) {ufo_move_counter=0;}   // speed of ufo
+			if (ufo_move_counter++ >= 10) {ufo_move_counter=0;}   // speed of ufo
 
 			refreshScreen();
 
@@ -272,7 +272,7 @@ int main(int argc, char **argv)
 
 void doScoring(int alienType)
 {
-	int points[4] = {500, 200, 150, 100};   	// 0: ufo, 0:red, 1:green, 2:blue
+	int points[4] = {500, 200, 150, 100};   	// 0: ufo, 1:red, 2:green, 3:blue
 	
 	score += points[alienType];		// every alien type does different scoring points
 	
