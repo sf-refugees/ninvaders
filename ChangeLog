@@ -1,3 +1,15 @@
+2003-05-26  Alexander Hollinger <alexander.hollinger@gmx.net>
+
+	* view.c (titleScreenDisplay): changed MAX_NUMBER_HIGHSCORE_ENTRIES
+          to MAX_HIGHSCORE_ENTRIES.
+
+	* highscore.c: changed writing / reading highscore from binary 
+	  mode to ascii mode for compatibility issues when porting 
+	  highscore from litte-endian to big-endian machines.
+
+	* highscore.h: adjusted declarations
+
+
 2003-09-18  Sebastian Gutsfeld  <segoh@gmx.net>
 
 	* nInvaders.c: included highscore.h
