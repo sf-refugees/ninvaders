@@ -29,11 +29,13 @@
 #include "player.h"
 #include "aliens.h"
 #include "ufo.h"
-#define FPS 50
-   int lives;
-long score;
 
+#define FPS 50
+
+int lives;
+long score;
 int status; // status handled in timer
+
 #define GAME_LOOP 1
 #define GAME_NEXTLEVEL 2
 #define GAME_PAUSED 3
@@ -136,62 +138,70 @@ void readInput()
 
 	ch = getch();		// get key pressed
 
+	switch (status) {
 
-	if (ch == 'l' || ch == KEY_RIGHT) {	// move player right
+	case GAME_PAUSED:
 
-		if (lastmove == 'l') {
-			playerTurboOn();	// enable Turbo
-		} else {
-			playerTurboOff();	// disable Turbo
-		}
-		playerMoveRight();		// move player
-		lastmove = 'l';			// remember last move for turbo mode
-
-	} else if (ch == 'h' || ch == KEY_LEFT) {	// move player left 
-
-		if (lastmove == 'h') {
-			playerTurboOn();	// enable Turbo
-		} else {
-			playerTurboOff();	// disable Turbo
-		}
-		playerMoveLeft();		// move player
-		lastmove = 'h';			// remember last move for turbo mode
-
-	} else if (ch == 'k' || ch == ' ') {	// shoot missile
-
-		playerLaunchMissile();
-
-	} else if (ch == 'p') {			// pause game until 'p' pressed again
-
-		// set status to game paused
-		if (status == GAME_PAUSED) {
+		if (ch == 'p') {
 			status = GAME_LOOP;
-		} else {
+		}
+		break;
+		       
+	case GAME_HIGHSCORE:
+
+		if (ch == ' ') {
+			titleScreenClear();
+			level = 0;      // reset level
+			score = 0;      // reset score
+			lives = 3;      // restore lives
+			status = GAME_NEXTLEVEL;
+		} else if (ch == 'q') {	// quit game
+			status = GAME_EXIT;
+		}
+		break;
+
+	case GAME_OVER:
+		break; // don't do anything
+
+	default:
+
+		if (ch == 'l' || ch == KEY_RIGHT) {	// move player right
+			if (lastmove == 'l') {
+				playerTurboOn();	// enable Turbo
+			} else {
+				playerTurboOff();	// disable Turbo
+			}
+			playerMoveRight();		// move player
+			lastmove = 'l';			// remember last move for turbo mode
+		} else if (ch == 'h' || ch == KEY_LEFT) {	// move player left 
+			if (lastmove == 'h') {
+				playerTurboOn();	// enable Turbo
+			} else {
+				playerTurboOff();	// disable Turbo
+			}
+			playerMoveLeft();		// move player
+			lastmove = 'h';			// remember last move for turbo mode
+		} else if (ch == 'k' || ch == ' ') {	// shoot missile
+			playerLaunchMissile();
+		} else if (ch == 'p') {			// pause game until 'p' pressed again
+			// set status to game paused
 			status = GAME_PAUSED;
+		} else if (ch == 'W') {			// cheat: goto next level
+			status = GAME_NEXTLEVEL;
+		} else if (ch == 'L') {			// cheat: one more live
+			lives++;
+			drawscore();
+		} else if (ch == 'q') {	// quit game
+			status = GAME_EXIT;
+		} else {		// disable turbo mode if key is not kept pressed
+			lastmove = ' ';
 		}
 
-	} else if (ch == 'W') {			// cheat: goto next level
-
-		status = GAME_NEXTLEVEL;
-
-	} else if (ch == 'L') {			// cheat: one more live
-
-		lives++;
-		drawscore();
-		
-	} else if ((ch == 'q')) {	// quit game
-
-		status = GAME_EXIT;
-
-	} else {		// disable turbo mode if key is not kept pressed
-
-		lastmove = ' ';
-
-	}
-
+	} // switch
+	
 }
-
-
+	
+	
 /**
  * timer
  * this method is executed every 1 / FPS seconds  
@@ -202,97 +212,97 @@ void handleTimer()
 	static int aliens_shot_counter = 0;
 	static int player_shot_counter = 0;
 	static int ufo_move_counter = 0;
+	static int title_animation_counter = 0;
+	static int game_over_counter = 0;
 	
 	switch (status) {
+		 
+	case GAME_NEXTLEVEL:    // go to next level
 		
-		// go to next level
-		case GAME_NEXTLEVEL:
-			
-			level++;	// increase level
-			
-			initLevel();	// initialize level
-	
-			aliens_move_counter = 0; 
-			aliens_shot_counter = 0;
-			player_shot_counter = 0;
-			ufo_move_counter = 0;
-		
-			weite = (shipnum+(skill_level*10)-(level*5)+5)/10;
-	
-			if (weite < 0) {
-				weite = 0;
-			}
-			
-			// change status and start game!
-			status = GAME_LOOP;
-		
-		
-		// do game handling
-		case GAME_LOOP:
-		
-			// move aliens			
-			if (aliens_move_counter == 0 && aliensMove() == 1) {
-				// aliens reached player
-				lives = 0;
-				status = GAME_OVER;
-			}
-			
-			// move player missile			
-			if (player_shot_counter == 0 && playerMoveMissile() == 1) {
-				// no aliens left
-				status = GAME_NEXTLEVEL;
-			}
+		level++;	// increase level
 
-			// move aliens' missiles
-			if (aliens_shot_counter == 0 && aliensMissileMove() == 1) {
-				// player was hit
-				lives--;			// player looses one life
-				drawscore();	                // draw score
-				playerExplode();		// display some explosion graphics
-				if (lives == 0) {		// if no lives left ...
-					status = GAME_OVER;		// ... exit game
-				}
-			}
-
-			// move ufo
-			if (ufo_move_counter == 0 && ufoShowUfo() == 1) {
-				ufoMoveLeft();			// move it one position to the left
-			}
-			
-			
-			if (aliens_shot_counter++ >= 5) {aliens_shot_counter=0;}     // speed of alien shot
-			if (player_shot_counter++ >= 1) {player_shot_counter=0;}     // speed of player shot
-			if (aliens_move_counter++ >= weite) {aliens_move_counter=0;} // speed of aliend
-			if (ufo_move_counter++ >= 3) {ufo_move_counter=0;}           // speed of ufo
-
-			refreshScreen();
-			break;
-			
-			
-		// game is paused	
-		case GAME_PAUSED:
-			break;
-			
-
-		// game over			
-		case GAME_OVER:
-			// todo: let player decide if he wants to start over or quit.
-			gameOverDisplay((SCREENWIDTH / 2) - (31 / 2), (SCREENHEIGHT / 2) - (13 / 2));
-			doSleep(3*1000*1000);
-			status = GAME_EXIT;
-			break;
-			
+		initLevel();	// initialize level
 		
-		// exit game
-		case GAME_EXIT:
-			finish(0);
-			break;
-			
-			
-		// display highscore
-		case GAME_HIGHSCORE:
-			break;
-			
+		aliens_move_counter = 0; 
+		aliens_shot_counter = 0;
+		player_shot_counter = 0;
+		ufo_move_counter = 0;
+		
+		weite = (shipnum+(skill_level*10)-(level*5)+5)/10;
+		
+		if (weite < 0) {
+			weite = 0;
+		}
+		
+		// change status and start game!
+		status = GAME_LOOP;
+
+	case GAME_LOOP:   	 // do game handling
+		
+		// move aliens			
+		if (aliens_move_counter == 0 && aliensMove() == 1) {
+			// aliens reached player
+			lives = 0;
+			status = GAME_OVER;
+		}
+		
+		// move player missile			
+		if (player_shot_counter == 0 && playerMoveMissile() == 1) {
+			// no aliens left
+			status = GAME_NEXTLEVEL;
+		}
+		
+		// move aliens' missiles
+		if (aliens_shot_counter == 0 && aliensMissileMove() == 1) {
+			// player was hit
+			lives--;			// player looses one life
+			drawscore();	                // draw score
+			playerExplode();		// display some explosion graphics
+			if (lives == 0) {		// if no lives left ...
+				status = GAME_OVER;		// ... exit game
+			}
+		}
+		
+		// move ufo
+		if (ufo_move_counter == 0 && ufoShowUfo() == 1) {
+			ufoMoveLeft();			// move it one position to the left
+		}
+		
+		
+		if (aliens_shot_counter++ >= 5) {aliens_shot_counter=0;}     // speed of alien shot
+		if (player_shot_counter++ >= 1) {player_shot_counter=0;}     // speed of player shot
+		if (aliens_move_counter++ >= weite) {aliens_move_counter=0;} // speed of aliend
+		if (ufo_move_counter++ >= 3) {ufo_move_counter=0;}           // speed of ufo
+		
+		refreshScreen();
+		break;
+		
+	case GAME_PAUSED:    // game is paused
+		break;
+		
+	case GAME_OVER:      // game over
+		if (game_over_counter == 100) {
+			battleFieldClear();
+			status = GAME_HIGHSCORE;
+			game_over_counter = 0;
+		} else {
+			gameOverDisplay();
+			game_over_counter++;
+		}
+		break;
+		
+	case GAME_EXIT:      // exit game
+		finish(0);
+		break;
+		
+	case GAME_HIGHSCORE: // display highscore
+		if (title_animation_counter == 0) {
+			titleScreenDisplay();
+		}
+
+		if (title_animation_counter++ >= 6) {title_animation_counter = 0;} // speed of animation
+		break;
+		
 	}
 }
 
@@ -318,31 +328,26 @@ void setUpTimer()
 
 int main(int argc, char **argv)
 {
-	
-	// initialize variables 
-
-	weite = 0;
+ 	weite = 0;
 	score = 0;
 	lives = 3;
 	level = 0;
 	skill_level = 1;
-	
+
 	evaluateCommandLine(argc, argv);	// evaluate command line parameters
 	graphicEngineInit();			// initialize graphic engine
 	
 	// set up timer/ game handling
 	setUpTimer();		
-	status = GAME_NEXTLEVEL;
+	status = GAME_HIGHSCORE;
 
 	// read keyboard input
 	do {
 		// do movements and key-checking
 		readInput();
 	} while (0 == 0);
-
-
-	return 0;
 	
+	return 0;
 }
 
 
