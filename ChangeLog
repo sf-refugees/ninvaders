@@ -1,3 +1,16 @@
+2003-05-26  Alexander Hollinger <alexander.hollinger@gmx.net>
+
+	* file.c (writeHighScore): writes highscore in binary mode
+	  hacking highscore file is more difficult now - and writing
+	  and reading much easier ;o)
+	  
+	* file.c (readHighScore): reads highscore from file.
+	  if no file exists or file seems corrupt or of wrong 
+	  version, some standard values are used.
+	  
+	* file.c (getStandardHighScore): some stanard values
+	
+
 2003-05-19  Alexander Hollinger <alexander.hollinger@gmx.net>
 	
 	* file.c: added file.c to test functionality with writing
