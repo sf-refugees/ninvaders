@@ -1,9 +1,3 @@
 * ncurses.h --> curses.h (for cray)
 * more levels
 * more aliens
-
-Done:
-* usleep not working correctly under windows/ irix
-* ufo
-* player and bunkers at startup not displayed on some terminals
-
