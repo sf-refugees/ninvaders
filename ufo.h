@@ -2,13 +2,15 @@
 
 #ifndef UFO
 #define UFO
+
+typedef struct Ufo Ufo;
 		
-struct structUfo {
+struct Ufo {
 	int posX;	  // horizontal position of aliens
 	int posY;	  // vertical position of aliens
 };
 	
-struct structUfo u;
+Ufo ufo;
 
 void ufoReset();
 int ufoShowUfo();
