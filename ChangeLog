@@ -1,3 +1,9 @@
+2003-04-07  Sebastian Gutsfeld  <segoh@gmx.net>
+
+	* view.c (ufoRefresh): reverted 'frame' assignement
+
+	* nInvaders.c (main): reverted to old ufo speed from revision 1.3
+
 2003-04-06  Alexander Hollinger <alexander.hollinger@gmx.net>
 	
 	* nInvaders.c (resetPlayer): added a call to playerMisisleClear();
