@@ -1,3 +1,46 @@
+2003-04-05  Sebastian Gutsfeld  <segoh@gmx.net>
+
+	* Makefile: Updated file for ufo
+
+	* aliens.c (aliensMissileMove): fixed comment
+
+	* aliens.h: fixed indentation
+
+	* globals.h: fixed indentation
+
+	* nInvaders.c: included ufo.h, fixed some comments and linebreaks
+
+	* nInvaders.c (initlevel): added initialisation for ufo
+
+	* nInvaders.c (main): added code for ufo
+
+	* nInvaders.c (doScoring): different score for different alien types
+
+	* nInvaders.h: added constants for alien types needed by
+	nInvaders.c (doScoring), fixed declaration of doScoring, fixed
+	Indentation
+
+	* player.c: included ufo.h (needed for playerMoveMissile)
+
+	* player.c (playerMoveMissile): added code needed for ufo, fixed
+	doScoring for alien type
+
+	* player.h: fixed indentation, fixed declaration of doScoring
+
+	* view.c: added WINDOW *wUfo, void ufoRefresh, static void ufoInit,
+	void ufoDisplay and void ufoClear
+
+	* view.c (aliensRefresh): fixed indentation and color codes
+
+	* view.c (graphicEngineInit): added ufoInit to last init section
+
+	* view.h: fixed indentation, added constans UFOWIDTH and UFOPOSY, added
+	declarations of ufoDisplay, ufoRefresh and ufoClear
+
+	* ufo.c: files for ufo handling (initial import into cvs)
+
+	* ufo.h: header file for ufo.c (initial import into cvs)
+	
 2003-04-04  Sebastian Gutsfeld  <segoh@gmx.net>
 
 	* nInvaders.h, player.c: updated every occurance of hit_player_test
