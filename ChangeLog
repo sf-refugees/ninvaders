@@ -1,3 +1,8 @@
+2003-04-18  Alexander Hollinger <alexander.hollinger@gmx.net>
+
+	* nInvaders.c (finish): "barely mediocre" and "show promise"
+	  both "< 10000". Changed latter to "< 12500"
+
 2003-04-17  Alexander Hollinger <alexander.hollinger@gmx.net>
 
 	* view.c (statusDisplay): modified so that buffer is written
@@ -76,7 +81,7 @@
 	* aliens.h: added typedef for Aliens and renamed 'a' into 'aliens'
 
 	* globals.c (RELEASE): updated release number
-
+	
 2003-04-07  Sebastian Gutsfeld  <segoh@gmx.net>
 
 	* view.c (ufoRefresh): reverted 'frame' assignement

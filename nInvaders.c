@@ -82,7 +82,7 @@ static void finish(int sig)
 		fprintf(stderr,"Easy Target\n\n");
 	else if(score<10000)
 		fprintf(stderr,"Barely Mediocre\n\n");
-	else if(score<10000)
+	else if(score<12500)
 		fprintf(stderr,"Shows Promise\n\n");
 	else if(score<15000)
 		fprintf(stderr,"Alien Blaster\n\n");
