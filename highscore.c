@@ -27,126 +27,193 @@
 #include <string.h>
 
 
+/**************************************************************************************************
+ * 
+ * private constants, variables, structures, declarations, macros
+ *
+ **************************************************************************************************/
 
-/**
- * returns object highscore initialized with standard values
- */
+#define HIGHSCORE_FILE          "highscore"		   /* filename of highscore             */
+#define HIGHSCORE_ID            "nInvaders Highscore"      /* header for highscore file         */
+#define HIGHSCORE_VERSION       "0.1"                      /* version number for highscore file */
+
+
+
+
+/**************************************************************************************************
+ *
+ * getStandardHighScore
+ *
+ * returns a HighScore object initialized with standard values
+ *
+ **************************************************************************************************/
 HighScore getStandardHighScore()
 {
+
 	HighScore hs;
+	HighScoreEntry *hs_b, *hs_n, *hs_e;
 	int n;
+
+	hs_b = hs.beginner;
+	hs_n = hs.normal;
+	hs_e = hs.expert;
 	
-	strcpy(hs.identifier, HIGHSCORE_ID);
-	strcpy(hs.version, HIGHSCORE_VERSION);		
+        for (n = MAX_HIGHSCORE_ENTRIES; n > 0; n--) {
+		
+		hs_b->score = n * 1000;
+		strcpy ( hs_b->name, "hollinge" );
+		hs_b++;
+		
+		hs_n->score = n * 1000;
+		strcpy ( hs_n->name, "sen_hoss" );
+		hs_n++;
+		
+		hs_e->score = n * 1000;
+		strcpy ( hs_e->name, "segoh" );
+		hs_e++;
 
-	for (n = 0; n < MAX_NUMBER_HIGHSCORE_ENTRIES; n++) {
-		hs.beginner[MAX_NUMBER_HIGHSCORE_ENTRIES - 1 - n].score = (n + 1) * 1000;
-		strcpy(hs.beginner[MAX_NUMBER_HIGHSCORE_ENTRIES - 1 - n].name, "hollinge");
-
-		hs.normal[MAX_NUMBER_HIGHSCORE_ENTRIES - 1 - n].score = (n + 1) * 1000;
-		strcpy(hs.normal[MAX_NUMBER_HIGHSCORE_ENTRIES - 1 - n].name, "sen_hoss");
-
-		hs.expert[MAX_NUMBER_HIGHSCORE_ENTRIES - 1 - n].score = (n + 1) * 1000;
-		strcpy(hs.expert[MAX_NUMBER_HIGHSCORE_ENTRIES - 1 - n].name, "segoh");
 	}	
 	
 	return hs;
+	
+} 
+
+
+
+/**************************************************************************************************
+ *
+ * fput_HighScoreData
+ *
+ * writes highscore entries to file
+ *
+ **************************************************************************************************/
+static void fput_HighScoreData (HighScoreEntry* hs_e, FILE* fp)
+{
+	int n;
+	for (n = 0; n < MAX_HIGHSCORE_ENTRIES; n++) {
+		fprintf ( fp, "%i %s\n", hs_e -> score, hs_e -> name );
+		hs_e++;
+	}
+	fputs ("\n", fp);
+}
+
+
+	
+/**************************************************************************************************
+ *
+ * writeHighScore
+ *
+ * writes highscore to file 
+ * return value
+ *     1 if successful
+ *     0 if error occurred
+ *
+ **************************************************************************************************/
+int writeHighScore (HighScore hs)
+{
+
+	FILE* fp_HighScore;
+	
+	if (( fp_HighScore = fopen (HIGHSCORE_FILE, "w") ) != NULL ) {
+		
+		/* write header */
+		fprintf ( fp_HighScore, "%s\nv%s\n\n", HIGHSCORE_ID, HIGHSCORE_VERSION ); 
+		
+                /* write data */
+		fputs ("beginner\n", fp_HighScore);
+		fput_HighScoreData (hs.beginner, fp_HighScore);
+		fputs ("normal\n", fp_HighScore);
+		fput_HighScoreData (hs.normal,   fp_HighScore);
+		fputs ("expert\n", fp_HighScore);
+		fput_HighScoreData (hs.expert,   fp_HighScore);
+	
+		/* close file */
+		fclose (fp_HighScore);
+		
+	} else {
+		
+		puts ("(EE) writeHighScore: cannot open highscore file for writing");
+		return 0;
+		
+	}
+
+	return 1;
+
 }
 
 
 
-/**
- * reads highscore to file 
- */
-HighScore readHighScore()
-{	
-	FILE* fpHighScore;
+/**************************************************************************************************
+ *
+ * fget_HighScoreData
+ *
+ * reads highscore data from file
+ *
+ **************************************************************************************************/
+static void fget_HighScoreData (HighScoreEntry *hs_e, FILE* fp)
+{
+        int  n;
+        for (n = 0; n < MAX_HIGHSCORE_ENTRIES; n++) {
+                fscanf ( fp, "%i %s\n", &hs_e->score, hs_e->name );
+		hs_e++;
+        }
+        fscanf (fp, "\n");
+}
+
+
+
+/**************************************************************************************************
+ *
+ * readHighScore
+ *
+ * reads highscore from file 
+ *
+ **************************************************************************************************/
+HighScore readHighScore (){
+	
+	FILE* fp_HighScore;
 	HighScore hs;
-	int fStandardValues = 0;
-	
-	fpHighScore = fopen ("highscore", "r");  // open file for reading action
+	char hs_id      [ sizeof(HIGHSCORE_ID) ];
+	char hs_version [ sizeof(HIGHSCORE_VERSION) ];
 
-	// if opening was successful
-	if (fpHighScore != NULL) {
+	HighScore standard = getStandardHighScore();
+	
+	if (( fp_HighScore = fopen (HIGHSCORE_FILE, "r") ) != NULL ) {
 		
-		// read header
-		fread(&hs.identifier, SIZE_HIGHSCORE_ID, 1, fpHighScore);
-		fread(&hs.version, SIZE_HIGHSCORE_VERSION, 1, fpHighScore);
-		
-		// check if this is the correct highscore version
-		if ((strcmp(hs.identifier, HIGHSCORE_ID) == 0)) {
-			
-			if (strcmp(hs.version, HIGHSCORE_VERSION) == 0) {
-				// read data
-				fread(&hs.beginner, sizeof(HighScoreEntry),
-				      MAX_NUMBER_HIGHSCORE_ENTRIES, fpHighScore);
-				fread(&hs.normal, sizeof(HighScoreEntry),
-				      MAX_NUMBER_HIGHSCORE_ENTRIES, fpHighScore);
-				fread(&hs.expert, sizeof(HighScoreEntry),
-				      MAX_NUMBER_HIGHSCORE_ENTRIES, fpHighScore);
-			} else {
-				// wrong version
-				fStandardValues = 1;
-				// puts("(EE) readHighscore: wrong version number"); 
-			}
-		} else {
-			// wrong file-identifier
-			fStandardValues = 1;
-			// puts("(EE) readHighscore: wrong file-id"); 
+		/* read header */
+		fscanf (fp_HighScore, "%[^\n]\nv%[^\n]\n\n", hs_id, hs_version);
+	
+		if ( strcmp (hs_id, HIGHSCORE_ID) != 0 ) {
+			puts ("(EE) readHighScore: highscore file has wrong header");
+			return standard;
 		}
-		
-		// close file
-		fclose(fpHighScore);
 
-	} else { 
-		// highscore file does not exist or cannot be opened otherwise
-		fStandardValues = 1;
-		// puts ("(EE) readHighscore: cannot open highscore file for reading"); 
+		if ( strcmp (hs_version, HIGHSCORE_VERSION) != 0 ) {
+			puts ("(EE) readHighScore: highscore file has wrong version number");
+			return standard;
+		}
+	
+		/* read data */
+		fscanf (fp_HighScore, "beginner\n");
+	        fget_HighScoreData (hs.beginner, fp_HighScore); 
+		fscanf (fp_HighScore, "normal\n");
+		fget_HighScoreData (hs.normal,   fp_HighScore);
+		fscanf (fp_HighScore, "expert\n");
+		fget_HighScoreData (hs.expert,   fp_HighScore);
 		
-	} // if
+		/* close file */
+		fclose (fp_HighScore);
+		
+	} else { 
 	
-	
-	if (fStandardValues == 1) {
-		// use standard values
-		hs = getStandardHighScore ();
-		// puts ("(II) readHighscore: using standard values");	
+		puts ("(EE) readHighScore: cannot open highscore file for reading");
+		return standard;
+
 	}
 	
 	return hs;
-}
 
-	
-	
-/**
- * writes highscore to file 
- */
-void writeHighScore(HighScore hs)
-{
-	FILE* fpHighScore;
-	fpHighScore = fopen("highscore", "w");  // open file for writing action
-
-	// if opening was successful
-	if (fpHighScore != NULL) {
-
-		// write header
-		fwrite(&hs.identifier, SIZE_HIGHSCORE_ID, 1, fpHighScore);
-		fwrite(&hs.version, SIZE_HIGHSCORE_VERSION, 1, fpHighScore);
-
-		// write data
-		fwrite (&hs.beginner, sizeof(HighScoreEntry),
-			MAX_NUMBER_HIGHSCORE_ENTRIES, fpHighScore);
-		fwrite (&hs.normal, sizeof(HighScoreEntry),
-			MAX_NUMBER_HIGHSCORE_ENTRIES, fpHighScore);
-		fwrite (&hs.expert, sizeof(HighScoreEntry),
-			MAX_NUMBER_HIGHSCORE_ENTRIES, fpHighScore);
-	
-		// close file
-		fclose (fpHighScore);
-		
-	} else {
-		// puts ("(EE) writeHighscore: cannot open highscore file for writing");
-	} // if
-}
+} 
 
 
 
@@ -164,7 +231,7 @@ void addEntry(char *name, int score, int hsType)
  			i++;
  		}
 		
- 		for (j = MAX_NUMBER_HIGHSCORE_ENTRIES; j > i; j--) {
+ 		for (j = MAX_HIGHSCORE_ENTRIES; j > i; j--) {
  			highscore.beginner[j] = highscore.beginner[j - 1];
  		}
 		
@@ -177,7 +244,7 @@ void addEntry(char *name, int score, int hsType)
  			i++; 
  		} 
 		
- 		for (j = MAX_NUMBER_HIGHSCORE_ENTRIES; j > i; j--) { 
+ 		for (j = MAX_HIGHSCORE_ENTRIES; j > i; j--) { 
  			highscore.normal[j] = highscore.normal[j - 1]; 
  		} 
 		
@@ -190,7 +257,7 @@ void addEntry(char *name, int score, int hsType)
  			i++; 
  		} 
 		
- 		for (j = MAX_NUMBER_HIGHSCORE_ENTRIES; j > i; j--) { 
+ 		for (j = MAX_HIGHSCORE_ENTRIES; j > i; j--) { 
  			highscore.expert[j] = highscore.expert[j - 1]; 
  		} 
 		
