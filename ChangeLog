@@ -1,3 +1,25 @@
+2003-09-18  Sebastian Gutsfeld  <segoh@gmx.net>
+
+	* nInvaders.c: included highscore.h
+
+	* nInvaders.c (readInput): added addEntry test in case
+	GAME_HIGHSCORE
+
+	* nInvaders.c (main): added reading of highscore file as startup
+	and saving of highscore at programm end
+
+	* view.c: included highscore.h
+
+	* view.c (titleScreenDisplay): added WINDOW wHighscore for
+	highscore display and changed whole function to display highscore
+	between alien frames
+
+	* highscore.c: renamed from score.c to highscore.c; added a few
+	functions (don't ask me which)
+
+	* highscore.h: headerfile for highscore.c
+	
+
 2003-05-26  Alexander Hollinger <alexander.hollinger@gmx.net>
 
 	* file.c (writeHighScore): writes highscore in binary mode
