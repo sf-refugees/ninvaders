@@ -1,0 +1,78 @@
+2003-04-05 Alexander Hollinger <alexander.hollinger@gmx.net>
+
+	* [view.c] (bunkersDisplay): now fully encapsulated using pointer 
+	  *pBunker to get access to bunker-array. Method is called from 
+	  [aliens.c] (bunkersReset) instead of [aliens.c] (render) thus 
+	  saving some cpu-time. The bunker has to be displayed only at the 
+	  beginning of a new level. Then we use bunkerClearElement or 
+	  bunkerClear to remove bunker elements. No need why it was in 
+	  [aliens.c] (render).
+
+2003-04-04  Sebastian Gutsfeld  <segoh@gmx.net>
+
+	* nInvaders.c (readInput): draw new number of lives in live-cheat
+
+	* aliens.c (aliensReset): put declaration of 'level' at
+	beginning of function
+
+2003-04-04 Alexander Hollinger <alexander.hollinger@gmx.net>
+
+	* [nInvaders.c] added a new cheat: "L" gives player one new life
+	  for better testing
+	* [aliens.c, player.c] (*Reset) forgot to reset alien-block and 
+	  bunkers-block. Now there is a bunkersReset in aliens.c
+	* [view.c] added method graphicEngineInit()
+	* [view.c] (refreshScreen) fixed problem with graphic display on some 
+	  terminals. bunker and player are now displayed at startup.  
+	* removed init.c and init.h from project 
+	* [globals.c] some minor changes to names of methods. moved code for 
+	  displaying version from nInvaders.c to globals.c. Added code to 
+	  redefine usleep for WIN32-platforms, this should hopefully fix the
+	  bug that the game was too fast there.
+
+2003-04-03 Alexander Hollinger <alexander.hollinger@gmx.net>
+	
+	* removed deprecated multi-line-strings in globals.c and nInvaders.c
+
+2003-04-02 Alexander Hollinger <alexander.hollinger@gmx.net>
+
+	* view.c now contains all methods which do graphical display
+	  (by using ncurses)
+	  
+	* added file aliens.c and aliens.h. Perhaps these can later melt
+	  with player.c and player.h.
+
+2003-04-01  Sebastian Gutsfeld  <segoh@gmx.net>
+
+	* *.c (*): formatted with 'indent -kr -i8 -l90' and fixed
+	some linebreaks
+
+2003-03-30 Alexander Hollinger <alexander.hollinger@gmx.net>
+
+	* added file "ToDo": put feature-requests and alike in here
+
+	* player.c (player*Missile*): processing of missiles moved to these
+	functions to reduce size of main().
+
+
+2003-03-29  Sebastian Gutsfeld  <segoh@gmx.net>
+
+	* init.c (initplayer): fixed comment
+
+	* player.c (playerInit): put declaration of 'playerSprite' at beginning
+	of function
+
+	* init.c (initshots): put declaration of 'a' at beginning of function
+
+2003-03-29 Alexander Hollinger <alexander.hollinger@gmx.net>
+
+	* added more comments and added player.c which is intended to hold all 
+	functions concearning the player
+
+	* added method playerLaunchMissile in player.c	
+	
+2003-03-28 Alexander Hollinger <alexander.hollinger@gmx.net>
+
+	* added some comments and split up some functions, especially in init.c.
+
+
