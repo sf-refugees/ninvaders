@@ -463,7 +463,7 @@ void titleScreenDisplay()
 		wattrset(wHighscore, COLOR_PAIR(WHITE));
 		waddstr(wHighscore, "         TOP 10         ");
 		waddstr(wHighscore, "                        ");
-		for (i = 0; i < MAX_NUMBER_HIGHSCORE_ENTRIES; i++) {
+		for (i = 0; i < MAX_HIGHSCORE_ENTRIES; i++) {
 			snprintf(highscoreBuffer, sizeof(highscoreBuffer), "%s.........%2.7d",
 				 highscore.normal[i].name, highscore.normal[i].score);
 			waddstr(wHighscore, highscoreBuffer);
