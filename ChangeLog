@@ -1,5 +1,12 @@
 2003-04-17  Alexander Hollinger <alexander.hollinger@gmx.net>
 
+	* nInvaders.c (readInput): removed (ch==27) for exit 
+          sequence. as dettus pointed out there would be problems
+	  on some terminals. pressing some keys too long will send
+	  an KEY_ESC and quit the game.
+
+2003-04-17  Alexander Hollinger <alexander.hollinger@gmx.net>
+
 	* nInvaders.c (setUpTimer): changed method to call handleTimer.
 	  The call signal(SIG_ALRM, handleTimer) didn't work on irix.
 	  There, the timer was only fired once and then the programm

@@ -155,7 +155,7 @@ void readInput()
 		lives++;
 		drawscore();
 		
-	} else if ((ch == 'q' || ch == 27)) {	// quit game
+	} else if ((ch == 'q')) {	// quit game
 
 		status = GAME_EXIT;
 
