@@ -51,23 +51,26 @@
 	
 void graphicEngineInit();
 	
-void playerDisplay(int x, int y);
-void playerClear(int x, int y);
-void playerMissileDisplay(int x, int y);
-void playerMissileClear(int x, int y);
-void playerExplosionDisplay(int x, int y);
-void aliensDisplay(int x, int y, int wid, int hgt);
 void aliensClear(int x, int y, int wid, int hgt);
-void aliensRefresh(int level, int *pAliens);
-void aliensMissileDisplay(int x, int y);
+void aliensDisplay(int x, int y, int wid, int hgt);
 void aliensMissileClear(int x, int y);
-void bunkersDisplay(int *pBunker);
+void aliensMissileDisplay(int x, int y);
+void aliensRefresh(int level, int *pAliens);
+void battleFieldClear();
 void bunkersClear();
 void bunkersClearElement(int x, int y);
+void bunkersDisplay(int *pBunker);
+void gameOverDisplay();
+void playerClear(int x, int y);
+void playerDisplay(int x, int y);
+void playerExplosionDisplay(int x, int y);
+void playerMissileClear(int x, int y);
+void playerMissileDisplay(int x, int y);
+void titleScreenClear();
+void titleScreenDisplay();
+void ufoClear(int x, int y);
 void ufoDisplay(int x, int y);
 void ufoRefresh();
-void ufoClear(int x, int y);
-void gameOverDisplay(int x, int y);
 
 void statusDisplay(int level, int score, int lives);	
 void refreshScreen();

@@ -1,3 +1,29 @@
+2003-05-05  Sebastian Gutsfeld  <segoh@gmx.net>
+
+	* nInvaders.c (readInput): updated readInput for reading input in
+	different states (see status var)
+
+	* nInvaders.c (handleTimer): added code for status GAME_HIGHSCORE
+	so a title screen with animation is shown; updated status
+	GAME_OVER
+
+	* nInvaders.c (main): updated status initialisation from
+	GAME_NEXTLEVEL to GAME_HIGHSCORE
+
+	* view.c: added WINDOW wTitleScreen; added titleScreenInit; added
+	titleScreenDisplay; added titleScreenClear; added battleFieldClear
+
+	* view.c (aliensRefresh): formatted some code
+
+	* view.c (ufoRefresh): fixed array length
+
+	* view.c (gameOverDisplay): simpified function
+
+	* view.c (graphicEngineInit): updated with titleScreenInit
+
+	* view.h: sorted function declarations; updated gameOverDisplay,
+	titleScreenClear, titleScreenDisplay and battleFieldClear
+
 2003-04-22  Alexander Hollinger <alexander.hollinger@gmx.net>
 
 	* globals.c (doSleep): added again. still needed in 
