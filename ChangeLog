@@ -1,3 +1,10 @@
+2003-04-04  Sebastian Gutsfeld  <segoh@gmx.net>
+
+	* nInvaders.h, player.c: updated every occurance of hit_player_test
+	to hit_alientest
+
+	* nInvaders.c (hit_alien_test): renamed from 'hit_player_test'
+
 2003-04-05 Alexander Hollinger <alexander.hollinger@gmx.net>
 
 	* [view.c] (bunkersDisplay): now fully encapsulated using pointer 

@@ -144,7 +144,7 @@ int playerMoveMissile()
 		}
 
 		// if missile hits an alien (TODO)
-		if (hit_player_test(p.missileX, p.missileY, a.posX, a.posY) == 1) {
+		if (hit_alien_test(p.missileX, p.missileY, a.posX, a.posY) == 1) {
 			
 			doScoring();					// increase score
 			playerReloadMissile();				// reload missile

@@ -17,7 +17,7 @@
 	void drawscore();
 	
 	int hit_bunker_test(int shotx, int shoty);
-	int hit_player_test(int shotx, int shoty, int alienx, int alieny);
+	int hit_alien_test(int shotx, int shoty, int alienx, int alieny);
 	
 	void doScoring();
 	

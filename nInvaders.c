@@ -83,7 +83,7 @@ void game_over(int a)
 	finish(0);
 }
 
-int hit_player_test(int shotx, int shoty, int alienx, int alieny)
+int hit_alien_test(int shotx, int shoty, int alienx, int alieny)
 {
 	int getroffen = 0;
 	int shipx, shipy = 0;
@@ -257,7 +257,7 @@ int main(int argc, char **argv)
 
 		do {
 			gotoNextLevel=0;
-			
+
 			if (move_counter == 0) {
 				
 				// move aliens
