@@ -4,8 +4,9 @@
 #ifndef ALIENS
 #define ALIENS
 
+typedef struct Aliens Aliens;
 	
-struct structAliens {
+struct Aliens {
 	int posX;	  // horizontal position of aliens
 	int posY;	  // vertical position of aliens
 	int right;
@@ -14,7 +15,7 @@ struct structAliens {
 	int speed;	  // 0: no movement; 1: one per turn; etc.
 };
 	
-struct structAliens a;
+Aliens aliens;
 	
 
 int shootme_counter;	
