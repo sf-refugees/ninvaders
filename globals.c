@@ -30,7 +30,10 @@ void showVersion()
 	fprintf(stderr, "*** nInvaders %i.%i.%i\n", MAJOR, MINOR, RELEASE);
 	fprintf(stderr, "*** (C)opyleft 2k2 by Dettus\n");
 	fprintf(stderr, "*** dettus@matrixx-bielefeld.de\n");
-	fprintf(stderr, "Additional code by Mike Saarna\n");
+	fprintf(stderr, "Additional code by Mike Saarna,\n");
+	fprintf(stderr, "Sebastian Gutsfeld -> segoh@gmx.net,\n");
+	fprintf(stderr, "Alexander Hollinger -> alexander.hollinger@gmx.net and\n");
+	fprintf(stderr, "Matthias Thar -> hiast2@compuserve.de\n");
 }
 
 
