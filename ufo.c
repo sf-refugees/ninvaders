@@ -9,11 +9,11 @@ static int fShowUfo = 0;
  */
 void ufoReset()
 {
-	ufoClear(u.posX, u.posY);	// clear old position of player
+	ufoClear(ufo.posX, ufo.posY);	// clear old position of player
 
 	fShowUfo = 0;                   // do not show ufo
-	u.posY = UFOPOSY;	        // set vertical Position
-	u.posX = SCREENWIDTH - UFOWIDTH;// set horizontal Position
+	ufo.posY = UFOPOSY;	        // set vertical Position
+	ufo.posX = SCREENWIDTH - UFOWIDTH;// set horizontal Position
 }
 
 /**
@@ -21,10 +21,10 @@ void ufoReset()
  */
 static void ufoMove(int posX)
 {
-	ufoClear(u.posX, u.posY);   // clear sprite
-	u.posX = posX;
+	ufoClear(ufo.posX, ufo.posY);   // clear sprite
+	ufo.posX = posX;
 	ufoRefresh();
-	ufoDisplay(u.posX, u.posY);
+	ufoDisplay(ufo.posX, ufo.posY);
 }
 
 
@@ -34,9 +34,9 @@ static void ufoMove(int posX)
 void ufoMoveLeft()
 {
 	// check if space between ufo and screen border is big enough 
-	if (u.posX > 1) {
+	if (ufo.posX > 1) {
 		// desired movement is possible
-		ufoMove(u.posX - 1);
+		ufoMove(ufo.posX - 1);
 	} else {
 		ufoReset();
 	}
@@ -48,7 +48,7 @@ void ufoMoveLeft()
  */
 int ufoShowUfo()
 {
-	if (a.posY > 0 && fShowUfo == 0) { // aliens one line down
+	if (aliens.posY > 0 && fShowUfo == 0) { // aliens one line down
 		if ((random() % 200) == 0) {
 			fShowUfo = 1;
 		}
@@ -67,7 +67,7 @@ int ufoHitCheck(int shotX, int shotY)
 	// if shot reached vertikal position of ufo
 	if (shotY == UFOPOSY) {
 		// if shot hits ufo
-		if (shotX >= u.posX && shotX <= u.posX + UFOWIDTH -1) {
+		if (shotX >= ufo.posX && shotX <= ufo.posX + UFOWIDTH -1) {
 			ufoReset();
 			fUfoWasHit = 1;
 		}
