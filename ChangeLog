@@ -1,3 +1,8 @@
+2003-05-19  Alexander Hollinger <alexander.hollinger@gmx.net>
+	
+	* file.c: added file.c to test functionality with writing
+	  highscore. may be removed later.
+	  
 
 ****** Release 0.1.1 ******
 
