@@ -275,7 +275,7 @@ void ufoRefresh()
 	static int frame = 0;
 
 	wclear(wUfo);
-        wattrset(wUfo,COLOR_PAIR(RED));
+        wattrset(wUfo,COLOR_PAIR(MAGENTA));
 	waddstr(wUfo, ufo[frame%=4]);
 
 	frame++;
@@ -289,7 +289,7 @@ static void ufoInit()
 {
 	wUfo = newpad(1, UFOWIDTH);	 // new pad with appropriate size
 	wclear(wUfo);    		 // clear pad
-        wattrset(wUfo,COLOR_PAIR(RED));	 // set color
+        wattrset(wUfo,COLOR_PAIR(MAGENTA));	 // set color
 }
 
 
