@@ -208,7 +208,7 @@ int aliensMissileMove(){
 			}
 		} // if 
 		
-		// display missiles if still running or just launched; could have been modified in the above code                                                                                                
+		// display missiles if still running or just launched; could have been modified in the above code
 		if (alienshotx[i] != 0) {
 			aliensMissileDisplay(alienshotx[i], alienshoty[i]); // display Missile at new position
 		}		
