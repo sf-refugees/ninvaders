@@ -25,38 +25,34 @@
 #ifndef HIGHSCORE
 #define HIGHSCORE
 
-// constants
-#define HIGHSCORE_ID "nInvaders Highscore"
-#define SIZE_HIGHSCORE_ID 30
 
-#define HIGHSCORE_VERSION "01"
-#define SIZE_HIGHSCORE_VERSION 5
+/**************************************************************************************************
+ * 
+ * public constants, variables, structures, declarations, macros
+ *
+ **************************************************************************************************/
 
-#define MAX_CHARS_HIGHSCORE_NAME 8
-#define MAX_NUMBER_HIGHSCORE_ENTRIES 10
+#define SIZE_HIGHSCORE_NAME     8                          /* number of letters for name        */
+typedef struct highscore_entry {
+        int  score;                                        /* score                             */
+        char name [SIZE_HIGHSCORE_NAME + 1];               /* player name                       */
+} HighScoreEntry;
 
-// data structures
-typedef struct HighScoreEntry HighScoreEntry;
-struct HighScoreEntry
-{
-	int score;	  			// score
-	char name[MAX_CHARS_HIGHSCORE_NAME+1];	// player name
-};
-      
-typedef struct HighScore HighScore;
-struct HighScore
-{
-	char identifier[SIZE_HIGHSCORE_ID]; // "nInvaders Highscore";
-	char version[SIZE_HIGHSCORE_VERSION]; // "01";
-	HighScoreEntry beginner[MAX_NUMBER_HIGHSCORE_ENTRIES];	// beginner
-	HighScoreEntry normal[MAX_NUMBER_HIGHSCORE_ENTRIES];	// normal
-	HighScoreEntry expert[MAX_NUMBER_HIGHSCORE_ENTRIES];	// expert
-};
 
-HighScore highscore;
+#define MAX_HIGHSCORE_ENTRIES   10                         /* number of highscore entries       */
+typedef struct highscore {
+        HighScoreEntry beginner [MAX_HIGHSCORE_ENTRIES];   /* beginner                          */
+        HighScoreEntry normal   [MAX_HIGHSCORE_ENTRIES];   /* normal                            */
+        HighScoreEntry expert   [MAX_HIGHSCORE_ENTRIES];   /* expert                            */
+} HighScore;
 
-HighScore readHighScore();
-void writeHighScore(HighScore hs);
-void addEntry(char *name, int score, int hsType);
+
+HighScore readHighScore    ();
+int       writeHighScore   (HighScore);
+void      addEntry         (char*, int, int);
+
+
+HighScore highscore; /* todo: not a global variable! */
+
 
 #endif
