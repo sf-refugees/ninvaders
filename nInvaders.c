@@ -7,6 +7,7 @@
 #include "nInvaders.h"
 #include "player.h"
 #include "aliens.h"
+#include "ufo.h"
 #ifndef true
 #define true 1
 #endif
@@ -18,6 +19,7 @@ void initlevel()
 {
 	playerReset();
 	aliensReset();
+	ufoReset();
 	bunkersReset();
 	render();
 }
@@ -192,7 +194,7 @@ int readInput()
 
 int main(int argc, char **argv)
 {
-	int move_counter, shot_counter;
+	int move_counter, shot_counter, ufo_move_counter;
 	int alienshot_counter;
 	int gotoNextLevel;
 	weite = 0;
@@ -235,19 +237,19 @@ int main(int argc, char **argv)
 
 	/* start game */
 
-	for (level = 1;; level++) {
-		
+	for (level = 1;; level++) {		
 
-		move_counter=0; 
-		shot_counter=0; alienshot_counter=0; shootme_counter=0;
+		move_counter = 0; 
+		shot_counter = 0;
+		alienshot_counter = 0;
+		shootme_counter = 0;
+		ufo_move_counter = 0;
 
-		
-		weite=(shipnum+(skill_level*10)-(level*5)+5)/10;
+		weite = (shipnum+(skill_level*10)-(level*5)+5)/10;
 
 		if (weite < 0) {
 			weite = 0;
 		}
-
 
 		/* display gaming field */
 		refreshScreen();	
@@ -257,7 +259,7 @@ int main(int argc, char **argv)
 
 		do {
 			gotoNextLevel=0;
-
+			
 			if (move_counter == 0) {
 				
 				// move aliens
@@ -284,18 +286,25 @@ int main(int argc, char **argv)
 				if (aliensMissileMove() == 1) {
 					// player was hit
 					p.lives--;			// player looses one life
-					drawscore();	// draw score
-					playerExplode(p.posX, p.posY);		// display some explosion graphics
+					drawscore();	                // draw score
+					playerExplode(p.posX, p.posY);	// display some explosion graphics
 					if (p.lives == 0) {		// if no lives left ...
 						game_over(1);		// ... exit game
 					}
 				}
 				
 			}
+
+			if (ufoShowUfo() == 1 && ufo_move_counter == 0) {
+				// if there's a ufo move it one position left
+				ufoMoveLeft();
+			}
 			
-			if (alienshot_counter++>=5) {alienshot_counter=0;}
-			if (shot_counter++>=1) {shot_counter=0;}
-			if (move_counter++>=weite) {move_counter=0;}
+			
+			if (alienshot_counter++ >= 5) {alienshot_counter=0;} // speed of alien shot
+			if (shot_counter++ >= 1) {shot_counter=0;}           // speed of player shot
+			if (move_counter++ >= weite) {move_counter=0;}       // speed of aliend
+			if (ufo_move_counter++ >= 3) {ufo_move_counter=0;}   // speed of ufo
 
 			playerDisplay(p.posX, p.posY);
 			refreshScreen();	
@@ -315,9 +324,11 @@ int main(int argc, char **argv)
 }
 
 
-void doScoring(){
+void doScoring(int alienType)
+{
+	int points[4] = {100, 100, 100, 400};   // 0:blue, 1:green, 2:red, 3:ufo
 	
-	score += 100;			// every alien does 100pts
+	score += points[alienType];		// every alien does 100pts
 	
 	// every 6000 pts player gets a new live
 	if (score % 6000 == 0){
