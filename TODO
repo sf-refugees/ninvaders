@@ -1,3 +1,6 @@
-* ncurses.h --> curses.h (for cray)
-* more levels
-* more aliens
+ - ncurses.h --> curses.h (for cray)
+ - more levels
+ - more aliens
+ - highscore
+ - title screen
+
