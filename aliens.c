@@ -196,7 +196,8 @@ void render()
  * move aliens' missiles and do player/bunker hit testing
  * a zero value in alienshotx indicates that the appropriate missile is loaded, but not fired
  */
-int aliensMissileMove(){
+int aliensMissileMove()
+{
 	int i, tmp;
 	int fPlayerWasHit = 0;
 	int shootThreshold;
@@ -233,7 +234,7 @@ int aliensMissileMove(){
 		} else {					// missile not launched yet
 			
 			// start new missile if counter says so
-			if (alienshot_counter > shootThreshold) {
+			if (alienshot_counter > shootThreshold && shipnum > 0) {// only shot if there's an alien left
 				alienshot_counter = 0;				// reset counter				
 				tmp = random() % ALIENS_MAX_NUMBER_X;  		// randomly select one of the ...
 				while (lowest_ship[tmp] == -1) {		// ...aliens at the bottom of ...
