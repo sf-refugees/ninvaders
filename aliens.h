@@ -16,14 +16,12 @@ struct Aliens {
 };
 	
 Aliens aliens;
-	
-
-int shootme_counter;	
+		
 int shipnum;	
 
 #define ALIENS_MAX_NUMBER_X 10
 #define ALIENS_MAX_NUMBER_Y 5	
-#define ALIENS_MAX_MISSILES 50	
+#define ALIENS_MAX_MISSILES 10	
 
 // todo: move to structure
 int lowest_ship[ALIENS_MAX_NUMBER_X];

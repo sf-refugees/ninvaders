@@ -20,7 +20,6 @@
 	
 #define ALIENS_MAX_NUMBER_X 10
 #define ALIENS_MAX_NUMBER_Y 5	
-#define ALIENS_MAX_MISSILES 50
 
 #define UFOWIDTH 5
 #define UFOPOSY 0

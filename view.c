@@ -23,6 +23,7 @@ WINDOW *wAliensMissile;
 WINDOW *wBunkers;
 WINDOW *wGameOver;
 WINDOW *wUfo;
+WINDOW *wStatus;
 
 /**
  * initialize player sprites
@@ -346,34 +347,56 @@ void gameOverDisplay(int x, int y)
 
 
 /**
+ * initialize scores
+ */
+void statusInit()
+{
+	wStatus = newpad(1, 55);
+	wclear(wStatus);
+}
+
+
+/**
  * display scores
  */
 void statusDisplay(int level, int score, int lives)
 {
 	int t, xOffset;
+	char strStatus[55];
+	// "Level: 01 Score: 0001450 Lives: /-\ /-\ /-\ /-\ /-\ "
+	// "1234567890123456789012345678901234567890123456789012"
+
+	
 	xOffset = (SCREENWIDTH / 2) - 24;
 	
-	attrset(COLOR_PAIR(RED));			// set color
+
+
+	sprintf (strStatus, "Level: %2.2d Score: %2.7d Lives: ", level, score);
+
+	wclear(wStatus);
+	wattrset(wStatus, COLOR_PAIR(RED));
+	waddstr(wStatus, strStatus);
+
+	// show maximal five lives
+	for (t = 1; ((t <= 5) && (t < lives)); t++){
+		waddstr(wStatus, "/-\\ ");
+	}
 	
-	// display level, score and lives
-	mvprintw(SCREENHEIGHT - 1, xOffset, "Level: %2.2d   Score: %7.7ld   Lives: ", level, score);
-	for (t = 0; ((t < 5) && (t < lives)); t++){
-		mvprintw(SCREENHEIGHT - 1, xOffset + 36 + (4 * t), "/-\\ ");
-	}
-	for (; t < 5; t++){
-		mvprintw(SCREENHEIGHT - 1, xOffset + 36 + (4 * t), "    ");
-	}
+	copywin(wStatus, wBattleField, 0, 0, SCREENHEIGHT-1, xOffset, SCREENHEIGHT-1, xOffset + 54, 0);
+	
+
 }
+
 
 /**
  * initialize battlefield
  */
 static void battleFieldInit()
 {
-	wEmpty = newpad(SCREENHEIGHT -1, SCREENWIDTH);
+	wEmpty = newpad(SCREENHEIGHT, SCREENWIDTH);
 	wclear(wEmpty);
 	
-	wBattleField = newwin(SCREENHEIGHT - 1, SCREENWIDTH, 0, 0);	// new window
+	wBattleField = newwin(SCREENHEIGHT, SCREENWIDTH, 0, 0);	// new window
 	wclear(wBattleField);						// clear window
 	mvwin(wBattleField, 0, 0);					// move window
 }
@@ -428,6 +451,7 @@ void graphicEngineInit()
 	bunkersInit();
 	ufoInit();
 	gameOverInit();
+	statusInit();
 
 }
 

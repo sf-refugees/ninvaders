@@ -28,9 +28,6 @@ void aliensReset()
 	aliens.left = 0;
 	aliens.speed = 1;
 	
-	// todo: move to structure!
-	shootme_counter = 0;
-	
 	// copy level-array to enemy-array 
 	for (i=0;i<ALIENS_MAX_NUMBER_X;i++) {
 		for (j=0;j<ALIENS_MAX_NUMBER_Y;j++) {
@@ -178,7 +175,14 @@ void render()
 int aliensMissileMove(){
 	int i, tmp;
 	int fPlayerWasHit = 0;
+	int shootThreshold;
+	static int alienshot_counter = 0;
 
+	
+	// calculate threshold when next missile should be fired
+	// it is done here to save calculation time in for-instruction 
+	shootThreshold = (skill_level * 8) * (shipnum + 2);
+	alienshot_counter = alienshot_counter + 10 ;
 	
 	// loop all possible missiles
 	for (i = 0; i < ALIENS_MAX_MISSILES; i++) {
@@ -201,11 +205,12 @@ int aliensMissileMove(){
 				fPlayerWasHit = 1;
 			}
 			
+			
 		} else {					// missile not launched yet
 			
 			// start new missile if counter says so
-			if (shootme_counter++ > (skill_level * 8 + 10) * (shipnum + 5)) {
-				shootme_counter = 0;				// reset counter				
+			if (alienshot_counter > shootThreshold) {
+				alienshot_counter = 0;				// reset counter				
 				tmp = random() % ALIENS_MAX_NUMBER_X;  		// randomly select one of the ...
 				while (lowest_ship[tmp] == -1) {		// ...aliens at the bottom of ...
 					tmp = random() % ALIENS_MAX_NUMBER_X;	// ...a column to launch missile
@@ -217,7 +222,12 @@ int aliensMissileMove(){
 		
 		// display missiles if still running or just launched; could have been modified in the above code
 		if (alienshotx[i] != 0) {
-			aliensMissileDisplay(alienshotx[i], alienshoty[i]); // display Missile at new position
+			// if missile is out of battlefield 
+			if (alienshoty[i] == SCREENHEIGHT - 1) {
+				alienshotx[i] = 0;	// reload missile	
+			} else {
+				aliensMissileDisplay(alienshotx[i], alienshoty[i]); // display Missile at new position
+			}
 		}		
 		
 	} // for

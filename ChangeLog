@@ -1,5 +1,31 @@
 2003-04-17  Alexander Hollinger <alexander.hollinger@gmx.net>
 
+	* view.c (statusDisplay): modified so that buffer is written
+	  to wBattleField. new variable WINDOW* wStatus. added method
+	  (statusInit) which does initialisation of WINDOW wStatus.
+	  Problem: Alien missiles go right to the bottom of screen, 
+	  where status is located and overwritten with missile sprite.
+	  Fix: see next point
+	  Changed behaviour of display of lives. Now the _remaining_
+	  lives are displayed. i.e. at the beginning you will see
+	  two little spaceshuttles, because you have two lives left.
+	  
+	* aliens.c (aliensMissileMove): added some checking, if missile
+	  reached bottom where player moves. if so, do not move further
+	  and reload missile. this reduces number of missiles which have
+	  to be hit-tested each round, yet made it necessary to change
+	  the shot-threshold otherwise too many missiles would have been
+	  coming down. Not limiting ALIENS_MAX_MISSILES from 50 to 10 is
+	  possible, because missiles are reloaded when they reach the 
+	  bottom. 10 concurrent missiles should be quite hard to manage..
+	  Removed ALIENS_MAX_MISSILES-definition from view.h. Was defined
+	  twice, now only in aliens.h.
+	  optimized threshold-checking. calculation outside for-
+	  instruction, and only comparison within.
+
+
+2003-04-17  Alexander Hollinger <alexander.hollinger@gmx.net>
+
 	* nInvaders.c (readInput): removed (ch==27) for exit 
           sequence. as dettus pointed out there would be problems
 	  on some terminals. pressing some keys too long will send
