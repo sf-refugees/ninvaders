@@ -279,12 +279,16 @@ void handleTimer()
 void setUpTimer()
 {
 	struct itimerval myTimer;
+	struct sigaction myAction;
 	myTimer.it_value.tv_sec = 0;
 	myTimer.it_value.tv_usec = 1000000 / FPS;
 	myTimer.it_interval.tv_sec = 0;
 	myTimer.it_interval.tv_usec = 1000000 / FPS;
 	setitimer(ITIMER_REAL, &myTimer, NULL);
-	signal(SIGALRM, handleTimer);
+	
+	myAction.sa_handler = &handleTimer;
+	myAction.sa_flags = SA_RESTART;
+	sigaction(SIGALRM, &myAction, NULL);
 }
 
 

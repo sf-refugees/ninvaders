@@ -1,3 +1,10 @@
+2003-04-17  Alexander Hollinger <alexander.hollinger@gmx.net>
+
+	* nInvaders.c (setUpTimer): changed method to call handleTimer.
+	  The call signal(SIG_ALRM, handleTimer) didn't work on irix.
+	  There, the timer was only fired once and then the programm
+	  exited. Now using call to sigaction() with flag SA_RESTART. 
+
 2003-04-16  Alexander Hollinger <alexander.hollinger@gmx.net>
 
 	* nInvaders.c: added a real-time timer that does 50 fps. if you
