@@ -3,11 +3,27 @@
 #include "ufo.h"
 #include "nInvaders.h"
 
+struct structPlayer {
+	int posX;	  // horizontal position of player
+	int posY;	  // vertical position of player
+	int speed;	  // 0: no movement; 1: one per turn; etc.
+	int missileFired; // 0: missile not running; 1: missile running
+	int missileX;	  // horizontal position of missile
+	int missileY;	  // vertical position of missile
+} p;
+	
+//struct structPlayer p;
+
 /**
  * initialize player attributes
  */
 void playerReset()
 {
+	// if missile was fired clear that position
+	if (p.missileFired == 1) {	
+		playerMissileClear(p.missileX, p.missileY);
+	}
+	
 	playerClear(p.posX, p.posY);	// clear old position of player
 	
 	p.posY = PLAYERPOSY;	// set vertical Position
@@ -15,7 +31,9 @@ void playerReset()
 	p.speed = 1;
 	p.missileFired = 0;
 	p.missileX=0; 
-	p.missileY=0; 	
+	p.missileY=0; 
+
+	playerDisplay(p.posX, p.posY);	// display new position of player
 }
 
 
@@ -129,11 +147,14 @@ static void playerReloadMissile()
 int playerMoveMissile()
 {
 	int fNoAliensLeft = 0;	// return value
+	int alienTypeHit = 0;
 
 	// only do movements if there is a missile to move
 	if (p.missileFired == 1) {
 		
 		playerMissileClear(p.missileX, p.missileY);		// clear old missile position
+		playerDisplay(p.posX, p.posY); // todo: check if this can be removed later if missiled is fired, 
+						//the middle of player is cleared
 		p.missileY--;						// move missile		
 
 		// if missile out of battlefield
@@ -144,9 +165,10 @@ int playerMoveMissile()
 		}
 
 		// if missile hits an alien (TODO)
-		if (hit_alien_test(p.missileX, p.missileY, a.posX, a.posY) == 1) {
+		alienTypeHit = aliensHitCheck(p.missileX, p.missileY);
+		if (alienTypeHit != 0) {
 			
-			doScoring(BLUE_ALIEN_TYPE);			// increase score (TODO: get alien color for alien type)
+			doScoring(alienTypeHit);			// increase score
 			playerReloadMissile();				// reload missile
 
 			aliensClear(a.posX, a.posY, a.right, a.bottom); // clear old posiiton of aliens
@@ -167,7 +189,7 @@ int playerMoveMissile()
 		}
 		
 		// if missile hits a bunker
-		if (hit_bunker_test(p.missileX, p.missileY) == 1) {
+		if (bunkersHitCheck(p.missileX, p.missileY) == 1) {
 			bunkersClearElement(p.missileX, p.missileY);	// clear element of bunker
 			playerReloadMissile();				// reload player missile
 		}
@@ -181,4 +203,12 @@ int playerMoveMissile()
 
 	return fNoAliensLeft;
 	
+}
+
+/** 
+ * let player explode
+ */
+void playerExplode(){
+	playerExplosionDisplay(p.posX, p.posY);
+	playerDisplay(p.posX, p.posY);
 }

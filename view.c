@@ -1,7 +1,6 @@
 #include "view.h"
 #include "globals.h"
-#include <stdlib.h>
-#include <ncurses.h>
+#include <stdlib.h>	
 #include <unistd.h>
 #include <signal.h>
 
@@ -89,7 +88,7 @@ void playerMissileClear(int x, int y)
 /**
  * some explosion animation
  */
-void playerExplode(int x, int y)
+void playerExplosionDisplay(int x, int y)
 {
 	WINDOW* wPlayerExplosion;
 	char playerExplosionChars[16+1]="@~`.,^#*-_=\\/%{}";
@@ -174,7 +173,7 @@ void aliensMissileClear(int x, int y)
 /**
  * refresh aliens sprite
  */
-void aliensRefresh(int level) 
+void aliensRefresh(int level, int *pAliens) 
 {
 	static int frame = 0; // used for animation; mod 2 == 0: frame1, mod2 == 1: frame2
 	int k,row;
@@ -195,14 +194,14 @@ void aliensRefresh(int level)
 	for (row = 0; row < ALIENS_MAX_NUMBER_Y*2; row++) {			
 		for (k=0;k<ALIENS_MAX_NUMBER_X;k++) {
 			if ((row % 2) == 0) {			// display aliens every even row
-				alienType=alienBlock[c][k]; 	// get type of alien
+				alienType = *(pAliens + c * (ALIENS_MAX_NUMBER_X) + k); 	// get type of alien //alienBlock[c][k]
 				
 				if (alienType != 0) {		// if there is an alien to display
 					wattrset(wAliens,COLOR_PAIR(colors[alienType-1]));		  // set color
 					waddch(wAliens,ships[frame%2][alienType-1+(3*((level-1)%3))][0]);  // set char1
 					waddch(wAliens,ships[frame%2][alienType-1+(3*((level-1)%3))][1]);  // set char2
 					waddch(wAliens,ships[frame%2][alienType-1+(3*((level-1)%3))][2]);  // set char3
-					if (alienType>4) {alienBlock[c][k]=(alienType+1)%9;} // todo: what's that? If alien_type > 4 then do a modulo operation???
+					if (alienType>4) {*(pAliens + c * (ALIENS_MAX_NUMBER_X) + k)=(alienType+1)%9;} // todo: what's that? If alien_type > 4 then do a modulo operation???
 				} else {
 					waddstr(wAliens,"   ");	// no alien
 				}
@@ -320,7 +319,7 @@ static void gameOverInit()
 	// init game-over banner
 	wGameOver = newpad(13, 31);
 	wclear(wGameOver);
-	wattrset(wGameOver, COLOR_PAIR(7));
+	wattrset(wGameOver, COLOR_PAIR(WHITE));
 	waddstr(wGameOver, "                               ");
 	waddstr(wGameOver, "  #####   ####  ##   ## ###### ");
 	waddstr(wGameOver, " ##      ##  ## ####### ##     ");

@@ -58,6 +58,30 @@ void waitForReturn()
 	fgets(b, sizeof(b), stdin);
 }
 
+/**
+ * show short version of Gnu GPL
+ */
+void showGplShort()
+{
+	fprintf(stderr,"\n");
+	fprintf(stderr,"This program is free software; you can redistribute it and/or modify\n");
+	fprintf(stderr,"it under the terms of the GNU General Public License as published by\n");
+	fprintf(stderr,"the Free Software Foundation; either version 2 of the License, or\n");
+	fprintf(stderr,"(at your option) any later version.\n");
+	fprintf(stderr,"\n");
+	fprintf(stderr,"This program is distributed in the hope that it will be useful,\n");
+	fprintf(stderr,"but WITHOUT ANY WARRANTY; without even the implied warranty of\n");
+	fprintf(stderr,"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n");
+	fprintf(stderr,"GNU General Public License for more details.\n");
+	fprintf(stderr,"\n");
+	fprintf(stderr,"You should have received a copy of the GNU General Public License\n");
+	fprintf(stderr,"along with this program; if not, write to the Free Software\n");
+	fprintf(stderr,"Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n");
+	fprintf(stderr,"\n");
+	fprintf(stderr,"Use the -gpl  command line switch to see the full license of this program\n");
+	fprintf(stderr,"Use the -help command line switch to see who wrote this program \n");
+	fprintf(stderr,"\n");
+}
 
 /**
  * show GNU GENERAL PUBLIC LICENSE

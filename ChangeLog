@@ -1,3 +1,49 @@
+2003-04-06  Alexander Hollinger <alexander.hollinger@gmx.net>
+	
+	* nInvaders.c (resetPlayer): added a call to playerMisisleClear();
+	
+	* view.c (aliensRefresh): fully encapsulated. access to aliens-Array
+	  by pointer.
+	  
+	* aliens.c (*HitCheck): moved hit_alien_test and hit_bunker_test to
+	  aliens.c and renamed to aliensHitCheck and bunkersHitCheck. Added
+	  comments and did improvement of bunkersHitCheck-Algorithm 
+	  (shoty < BUNKERY + BUNKERHEIGHT instead of <=).
+	  
+	* nInvaders.c (finish): moved short version of GPL to globals.c 
+	  (showGplShort)
+	  
+	* view.c (gameOverInit): fixed color code
+	
+	* player.h: removed lives from structPlayer. This variable belongs
+	  more to the gamehandling in nInvaders.c that to the model of the 
+	  player in player.c. This is done because of better encapsulation 
+	  of player.c.
+	
+	* player.c (playerReset): added a playerDisplay. Removed playerDisplay
+	  from nInvaders.c just before refreshScreen() and added another
+	  playerDisplay in the player.c (playerMissileMove) so that the 
+	  playerMissileClear does not clear the middle of the player when
+	  a new shot is fired.
+	  
+	* aliens.c (aliensHitCheck): added support for return of alienType so 
+	  that different scoring according to type of aliens is possible. 
+	  had to change values für alien_type constants in nInvaders.h and 
+	  the order of scores in the points-array in nInvaders.c (doScoring).
+	  ufo gets 500pt, aliens 100pt, 150pt or 200pt.
+	  
+	* aliens.c (aliensReset): clears missiles of aliens, if any 
+	
+	* nInvaders.c (main): changed some variable names (*_counter) and
+	  contracted some if-statements.
+	 
+	* view.c (playerExplosionDisplay): renamed from playerExplode. Added
+	  player.c (playerExplode) which calls playerExplosionDisplay and
+	  playerDisplay. Thus, I could remove the playerExplode(p.posX, p.posY)
+	  from nInvaders.c and add a playerExplode(). All Elements of the 
+	  structure structPlayer now are "private".
+	  
+
 2003-04-05  Sebastian Gutsfeld  <segoh@gmx.net>
 
 	* Makefile: Updated file for ufo

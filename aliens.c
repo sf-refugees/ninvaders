@@ -28,6 +28,9 @@ void aliensReset()
 	a.left = 0;
 	a.speed = 1;
 	
+	// todo: move to structure!
+	shootme_counter = 0;
+	
 	// copy level-array to enemy-array 
 	for (i=0;i<ALIENS_MAX_NUMBER_X;i++) {
 		for (j=0;j<ALIENS_MAX_NUMBER_Y;j++) {
@@ -37,6 +40,9 @@ void aliensReset()
 	
 	// reset missiles
 	for (i = 0; i < ALIENS_MAX_MISSILES; i++) {
+		if (alienshotx[i] != 0) {
+			aliensMissileClear(alienshotx[i],alienshoty[i]);	// clear old position
+		}
 		alienshotx[i] = 0;  // start with zero values
 		alienshoty[i] = 0;  // start with zero values
 	}
@@ -160,7 +166,7 @@ void render()
 	a.right=a.right*3; // alien sprite is 3 chars wide
 	
 	// display remaining aliens with animation
-	aliensRefresh(level);
+	aliensRefresh(level, &alienBlock[0][0]);
 
 }
 
@@ -183,7 +189,7 @@ int aliensMissileMove(){
 			aliensMissileClear(alienshotx[i],alienshoty[i]);	// clear old position
 				
 			// if missile hit the bunkers	
-			if (hit_bunker_test(alienshotx[i], alienshoty[i]) == 1) {
+			if (bunkersHitCheck(alienshotx[i], alienshoty[i]) == 1) {
 				alienshotx[i] = 0;		// value of zero reloads missile
 			}
 			
@@ -191,6 +197,7 @@ int aliensMissileMove(){
 			
 			// check if player was hit by an alien missile
 			if (playerHitCheck(alienshotx[i], alienshoty[i]) == 1) {
+				alienshotx[i] = 0;		// value of zero reloads missile
 				fPlayerWasHit = 1;
 			}
 			
@@ -217,4 +224,50 @@ int aliensMissileMove(){
 
 
 	return fPlayerWasHit;
+}
+
+
+
+/**
+ * check if missile hit an alien
+ */
+int aliensHitCheck(int shotx, int shoty)
+{
+	int alienType = 0;
+	int shipx, shipy;
+	// if missile is within alien-rectangle 
+	if (shotx >= a.posX && shotx <= a.posX + ALIENS_MAX_NUMBER_X * 3 - 1
+	    && shoty >= a.posY && shoty <= a.posY + (ALIENS_MAX_NUMBER_Y - 1) * 2) {
+		// calculate the ship that was hit
+		shipx = (shotx - a.posX) / 3;
+		shipy = (shoty - a.posY) / 2;
+		// if there is still a ship at this position
+		alienType = alienBlock[shipy][shipx];
+		if (alienType != 0) {
+			alienBlock[shipy][shipx] = 0;	// delete alien ship
+		}
+	}
+	return alienType; 	// returns 0 if no alien was hit, else returns type-code of alien
+}
+
+/**
+ * check if missile hit an element of bunker
+ */
+int bunkersHitCheck(int shotx, int shoty)
+{
+	int adjx, adjy;
+	int fBunkerWasHit = 0;
+	// if missile is within bunker-rectangle
+	if (shotx >= BUNKERX && shotx < BUNKERX + BUNKERWIDTH
+	    && shoty >= BUNKERY && shoty < BUNKERY + BUNKERHEIGHT) {
+		// calculate the element of the bunker that was hit
+		adjy = shoty - BUNKERY; 
+		adjx = shotx - BUNKERX;
+		// if there is still an element
+		if(bunker[adjy][adjx] == 1){
+			bunker[adjy][adjx] = 0;	// delete element
+			fBunkerWasHit = 1; 		// bunker was hit!
+		}
+	}
+	return fBunkerWasHit;
 }

@@ -25,7 +25,6 @@
 #define UFOWIDTH 5
 #define UFOPOSY 0
 
-int alienBlock[ALIENS_MAX_NUMBER_Y][ALIENS_MAX_NUMBER_X];	
 	
 void graphicEngineInit();
 	
@@ -33,10 +32,10 @@ void playerDisplay(int x, int y);
 void playerClear(int x, int y);
 void playerMissileDisplay(int x, int y);
 void playerMissileClear(int x, int y);
-void playerExplode(int x, int y);
+void playerExplosionDisplay(int x, int y);
 void aliensDisplay(int x, int y, int wid, int hgt);
 void aliensClear(int x, int y, int wid, int hgt);
-void aliensRefresh(int level);
+void aliensRefresh(int level, int *pAliens);
 void aliensMissileDisplay(int x, int y);
 void aliensMissileClear(int x, int y);
 void bunkersDisplay(int *pBunker);

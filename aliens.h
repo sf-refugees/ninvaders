@@ -12,9 +12,6 @@ struct structAliens {
 	int left;
 	int bottom;
 	int speed;	  // 0: no movement; 1: one per turn; etc.
-	//int missileFired; // 0: missile not running; 1: missile running
-	//int missileX;	  // horizontal position of missile
-	//int missileY;	  // vertical position of missile
 };
 	
 struct structAliens a;
@@ -27,25 +24,29 @@ int shipnum;
 #define ALIENS_MAX_NUMBER_Y 5	
 #define ALIENS_MAX_MISSILES 50	
 
+// todo: move to structure
 int lowest_ship[ALIENS_MAX_NUMBER_X];
 int alienshotx[ALIENS_MAX_MISSILES];
 int alienshoty[ALIENS_MAX_MISSILES];
 int alienshotnum;
-	
-void aliensReset();
-void bunkersReset();
-	
-int aliensMove();
-int aliensMissileMove();
+int alienBlock[ALIENS_MAX_NUMBER_Y][ALIENS_MAX_NUMBER_X];
 
 int bunker[BUNKERHEIGHT][BUNKERWIDTH + 1];	
-	
+
+
+void aliensReset();
+void bunkersReset();	
+int aliensMove();
+int aliensMissileMove();
 void render();
+int aliensHitCheck(int shotx, int shoty);
+int bunkersHitCheck(int shotx, int shoty);
+
 	
 // methods that handle graphic display, from view.c
 extern void aliensDisplay(int x, int y, int wid, int hgt);
 extern void aliensClear(int x, int y, int wid, int hgt);
-extern void aliensRefresh(int level);
+extern void aliensRefresh(int level, int *pAliens);
 extern void aliensMissileDisplay(int x, int y);
 extern void aliensMissileClear(int x, int y);
 extern void bunkersClearElement(int x, int y);
