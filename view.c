@@ -23,7 +23,7 @@ WINDOW *wAliens;
 WINDOW *wAliensMissile;	
 WINDOW *wBunkers;
 WINDOW *wGameOver;
-
+WINDOW *wUfo;
 
 /**
  * initialize player sprites
@@ -118,7 +118,7 @@ void playerExplode(int x, int y)
  */
 static void aliensInit()
 {
-	wAliens=newpad(ALIENS_MAX_NUMBER_Y*2,ALIENS_MAX_NUMBER_X*3);
+	wAliens = newpad(ALIENS_MAX_NUMBER_Y*2,ALIENS_MAX_NUMBER_X*3);
 	wclear(wAliens);
 }
 
@@ -176,13 +176,15 @@ void aliensMissileClear(int x, int y)
  */
 void aliensRefresh(int level) 
 {
-	static int frame=0; // used for animation; mod 2 == 0: frame1, mod2 == 1: frame2
+	static int frame = 0; // used for animation; mod 2 == 0: frame1, mod2 == 1: frame2
 	int k,row;
-	int c=0;
-	int alienType=0;
-	char ships[2][9][3+1]={{",^,","_O-","-o-","o=o","<O>","_x_","*^*","\\_/","o o"},
-			    {".-.","-O_","/o\\","o-o","<o>","-x-","o^o","/~\\","oo "}};
-	int colors[9]={1,2,4,1,3,7,7,3,1};
+	int c = 0;
+	int alienType = 0;
+	char ships[2][9][3+1] = {
+		{",^,", "_O-", "-o-",  "o=o", "<O>", "_x_", "*^*", "\\_/", "o o"},
+		{".-.", "-O_", "/o\\", "o-o", "<o>", "-x-", "o^o", "/~\\", "oo "}
+	};
+	int colors[9] = {RED, GREEN, BLUE, RED, YELLOW, WHITE, WHITE, YELLOW, RED};
 
 	wclear(wAliens);						// clear pad
 	wattrset(wAliens,COLOR_PAIR(RED));				// set color
@@ -262,6 +264,51 @@ void bunkersClear()
 void bunkersClearElement(int x, int y) 
 {
 	copywin(wEmpty, wBattleField, 0, 0, y, x, y, x, 0);
+}
+
+
+/**
+ * set actual sprite for ufo animation
+ */
+void ufoRefresh()
+{
+	char ufo[4][5] = {"<o o>", "<oo >", "<o o>", "< oo>"};
+	static int frame = 0;
+
+	wclear(wUfo);
+        wattrset(wUfo,COLOR_PAIR(RED));
+	waddstr(wUfo, ufo[frame % 4]);
+
+	frame++;
+}
+
+
+/**
+ * initialize ufo sprite
+ */
+static void ufoInit()
+{
+	wUfo = newpad(1, UFOWIDTH);	 // new pad with appropriate size
+	wclear(wUfo);    		 // clear pad
+        wattrset(wUfo,COLOR_PAIR(RED));	 // set color
+}
+
+
+/**
+ * display ufo sprite
+ */
+void ufoDisplay(int x, int y)
+{
+	copywin(wUfo,wBattleField,0,0,y,x,y,x+UFOWIDTH-1,0);
+}
+
+
+/**
+ * clear ufo sprite
+ */
+void ufoClear(int x, int y) 
+{
+	copywin(wEmpty,wBattleField,0,0,y,x,y,x+UFOWIDTH-1,0);
 }
 
 
@@ -380,5 +427,8 @@ void graphicEngineInit()
 	aliensInit();
 	aliensMissileInit();
 	bunkersInit();
+	ufoInit();
 	gameOverInit();
+
 }
+
