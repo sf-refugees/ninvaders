@@ -18,15 +18,15 @@ void aliensReset()
 		{3,3,3,3,3,3,3,3,3,3}
 	};
 
-	aliensClear(a.posX, a.posY, a.right, a.bottom);	// clear old position of aliens
+	aliensClear(aliens.posX, aliens.posY, aliens.right, aliens.bottom);	// clear old position of aliens
 	
 	// reset alien position
-	a.posX = 0;
-	a.posY = 0;
-	a.right = 0;
-	a.bottom = 0;
-	a.left = 0;
-	a.speed = 1;
+	aliens.posX = 0;
+	aliens.posY = 0;
+	aliens.right = 0;
+	aliens.bottom = 0;
+	aliens.left = 0;
+	aliens.speed = 1;
 	
 	// todo: move to structure!
 	shootme_counter = 0;
@@ -95,22 +95,22 @@ int aliensMove()
 	int fReachedPlayer=0; 				// return value
 
 	render();	
-	aliensClear(a.posX, a.posY, a.right, a.bottom);	// clear old position of aliens
+	aliensClear(aliens.posX, aliens.posY, aliens.right, aliens.bottom);	// clear old position of aliens
 
-	a.posX = a.posX + a.speed;			// move aliens left/ right
+	aliens.posX = aliens.posX + aliens.speed;			// move aliens left/ right
 	
 	// when aliens reached left or right screen-border
-	if (a.posX == (BUNKERWIDTH + BUNKERX - 5 - a.right) || a.posX == (BUNKERX + a.left)) {
+	if (aliens.posX == (BUNKERWIDTH + BUNKERX - 5 - aliens.right) || aliens.posX == (BUNKERX + aliens.left)) {
 		
-		a.posY++;				// move aliens downwards
+		aliens.posY++;				// move aliens downwards
 		
 		// aliens reached player
-		if (a.posY == SCREENHEIGHT - 2 - a.bottom) {
+		if (aliens.posY == SCREENHEIGHT - 2 - aliens.bottom) {
 			fReachedPlayer = 1;		// set return value
 		}
 		
 		// aliens reached bunkers //funzt nicht ganz: todo
-		if (a.posY == BUNKERY - a.bottom) {
+		if (aliens.posY == BUNKERY - aliens.bottom) {
 			// clear bunkers
 			for(cx=0;cx<BUNKERWIDTH;cx++) {
 				for(cy=0;cy<BUNKERHEIGHT;cy++) { 
@@ -120,10 +120,10 @@ int aliensMove()
 			bunkersClear();	// clear bunkers sprites
 		}
 		
-		a.speed = a.speed * (-1);		  // change direction of aliens' movements
+		aliens.speed = aliens.speed * (-1);		  // change direction of aliens' movements
 	}
 
-	aliensDisplay(a.posX, a.posY, a.right, a.bottom); // display aliens at new position
+	aliensDisplay(aliens.posX, aliens.posY, aliens.right, aliens.bottom); // display aliens at new position
 	
 	return fReachedPlayer;				  // return if aliens reached player
 }
@@ -138,9 +138,9 @@ void render()
 	int c=0;
 
 	// calculate left, right, bottom, lowest_ship	
-	a.left=1;
-	a.right=-1;
-	a.bottom=-1;
+	aliens.left=1;
+	aliens.right=-1;
+	aliens.bottom=-1;
 	shipnum=0;
 	for (k=0;k<11;k++) {
 		lowest_ship[k]=-1;
@@ -152,18 +152,18 @@ void render()
 				if (alienBlock[c][k] != 0) {
 					lowest_ship[k]=row;
 					shipnum++;
-					if (a.left==1 || -k>a.left) {a.left=-k;}
-					if (a.right==-1 || k>a.right) {a.right=k;}
-					if (a.bottom==-1 || c>a.bottom) {a.bottom=c;}
+					if (aliens.left==1 || -k>aliens.left) {aliens.left=-k;}
+					if (aliens.right==-1 || k>aliens.right) {aliens.right=k;}
+					if (aliens.bottom==-1 || c>aliens.bottom) {aliens.bottom=c;}
 				} 
 			}
 		} else {
 			c++;
 		}
 	}
-	a.bottom=a.bottom*2;	// every 2nd row is an empty row
-	a.left=a.left*3; // alien sprite is 3 chars wide
-	a.right=a.right*3; // alien sprite is 3 chars wide
+	aliens.bottom=aliens.bottom*2;	// every 2nd row is an empty row
+	aliens.left=aliens.left*3; // alien sprite is 3 chars wide
+	aliens.right=aliens.right*3; // alien sprite is 3 chars wide
 	
 	// display remaining aliens with animation
 	aliensRefresh(level, &alienBlock[0][0]);
@@ -210,8 +210,8 @@ int aliensMissileMove(){
 				while (lowest_ship[tmp] == -1) {		// ...aliens at the bottom of ...
 					tmp = random() % ALIENS_MAX_NUMBER_X;	// ...a column to launch missile
 				}
-				alienshoty[i]=a.posY+lowest_ship[tmp];		// set y position of missile
-				alienshotx[i]=a.posX+tmp*3;			// set x position of missile
+				alienshoty[i]=aliens.posY+lowest_ship[tmp];		// set y position of missile
+				alienshotx[i]=aliens.posX+tmp*3;			// set x position of missile
 			}
 		} // if 
 		
@@ -236,11 +236,11 @@ int aliensHitCheck(int shotx, int shoty)
 	int alienType = 0;
 	int shipx, shipy;
 	// if missile is within alien-rectangle 
-	if (shotx >= a.posX && shotx <= a.posX + ALIENS_MAX_NUMBER_X * 3 - 1
-	    && shoty >= a.posY && shoty <= a.posY + (ALIENS_MAX_NUMBER_Y - 1) * 2) {
+	if (shotx >= aliens.posX && shotx <= aliens.posX + ALIENS_MAX_NUMBER_X * 3 - 1
+	    && shoty >= aliens.posY && shoty <= aliens.posY + (ALIENS_MAX_NUMBER_Y - 1) * 2) {
 		// calculate the ship that was hit
-		shipx = (shotx - a.posX) / 3;
-		shipy = (shoty - a.posY) / 2;
+		shipx = (shotx - aliens.posX) / 3;
+		shipy = (shoty - aliens.posY) / 2;
 		// if there is still a ship at this position
 		alienType = alienBlock[shipy][shipx];
 		if (alienType != 0) {
