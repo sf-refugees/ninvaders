@@ -1,5 +1,6 @@
 #include "player.h"
 #include "aliens.h"
+#include "ufo.h"
 #include "nInvaders.h"
 
 /**
@@ -14,8 +15,7 @@ void playerReset()
 	p.speed = 1;
 	p.missileFired = 0;
 	p.missileX=0; 
-	p.missileY=0; 
-	
+	p.missileY=0; 	
 }
 
 
@@ -146,7 +146,7 @@ int playerMoveMissile()
 		// if missile hits an alien (TODO)
 		if (hit_alien_test(p.missileX, p.missileY, a.posX, a.posY) == 1) {
 			
-			doScoring();					// increase score
+			doScoring(BLUE_ALIEN_TYPE);			// increase score (TODO: get alien color for alien type)
 			playerReloadMissile();				// reload missile
 
 			aliensClear(a.posX, a.posY, a.right, a.bottom); // clear old posiiton of aliens
@@ -171,7 +171,12 @@ int playerMoveMissile()
 			bunkersClearElement(p.missileX, p.missileY);	// clear element of bunker
 			playerReloadMissile();				// reload player missile
 		}
-		
+
+		// if missile hits ufo
+		if (ufoHitCheck(p.missileX, p.missileY) == 1) {
+			doScoring(UFO_ALIEN_TYPE);
+			playerReloadMissile();
+		}
 	}
 
 	return fNoAliensLeft;
