@@ -24,6 +24,7 @@
 
 #include "view.h"
 #include "globals.h"
+#include "highscore.h"
 #include <stdlib.h>	
 #include <unistd.h>
 #include <signal.h>
@@ -395,6 +396,7 @@ void titleScreenDisplay()
 	int i;
 	WINDOW *wTitleText;
 	WINDOW *wAliens;
+	WINDOW *wHighscore;
 	WINDOW *wStartText;
 	char ufo[4][6] = {"<o o>", "<oo >", "<o o>", "< oo>"};
 	char aliens[2][9][3+1] = {
@@ -404,8 +406,29 @@ void titleScreenDisplay()
 	int score[3] = {200, 150, 100};
 	int colors[9] = {RED, GREEN, BLUE, RED, GREEN, BLUE, RED, GREEN, BLUE};
 	char buffer[12];
+	char highscoreBuffer[25];
 	static int alien_type = 0;
+	static int fShowHighscore = 0;
 
+	/* toggle between different alien types and highscores */ 
+	if ((frame = frame++ % 180) == 0) {
+		alien_type = 0;
+		fShowHighscore = 0;
+	} else if (frame == 30) {
+		fShowHighscore = 1;
+	} else if (frame == 60) {
+		alien_type = 3;
+		fShowHighscore = 0;
+	} else if (frame == 90) {
+		fShowHighscore = 1;
+	} else if (frame == 120) {
+		alien_type = 6;
+		fShowHighscore = 0;
+	} else if (frame == 150) {
+		fShowHighscore = 1;
+	}
+
+	/* big title */
 	wTitleText = newpad(4, 41);
 	wclear(wTitleText);
 	wattrset(wTitleText, COLOR_PAIR(YELLOW));
@@ -414,38 +437,68 @@ void titleScreenDisplay()
         waddstr(wTitleText, " / _ \\_/ // _ \\ |/ / _ `/ _  / -_) __(_-<");
 	waddstr(wTitleText, "/_//_/___/_//_/___/\\_,_/\\_,_/\\__/_/ /___/");
 
-	frame++;
+
 	wAliens = newpad(7, 11);
-	wclear(wAliens);
-	snprintf(buffer, sizeof(buffer),"%s = 500", ufo[frame % 4]);
-	wattrset(wAliens, COLOR_PAIR(MAGENTA));
-	waddstr(wAliens, buffer);
-	if ((frame = frame % 60) == 0) {
-		alien_type = 0;
-	} else if (frame == 20) {
-		alien_type = 3;
-	} else if (frame == 40) {
-		alien_type = 6;
-	}
-	for (i = alien_type; i < alien_type + 3; i++) {
-		waddstr(wAliens, "           ");
-		snprintf(buffer, sizeof(buffer), "%s   = %d", aliens[frame % 2][i], score[i % 3]);
-		wattrset(wAliens, COLOR_PAIR(colors[i]));
-		waddstr(wAliens, buffer);
+	wHighscore = newpad(12, 24);
+	if (fShowHighscore == 0) {
+		
+		/* alien animation with score */
+
+		wclear(wAliens);
+		snprintf(buffer, sizeof(buffer),"%s = 500", ufo[frame % 4]);
+		wattrset(wAliens, COLOR_PAIR(MAGENTA));                      
+		waddstr(wAliens, buffer); // print ufo
+
+		for (i = alien_type; i < alien_type + 3; i++) {
+			waddstr(wAliens, "           ");
+			snprintf(buffer, sizeof(buffer), "%s   = %d", aliens[frame % 2][i], score[i % 3]);
+			wattrset(wAliens, COLOR_PAIR(colors[i]));
+			waddstr(wAliens, buffer); // print aliens
+		}
+
+	} else {
+
+		/* highscore */
+		wclear(wHighscore);
+		wattrset(wHighscore, COLOR_PAIR(WHITE));
+		waddstr(wHighscore, "         TOP 10         ");
+		waddstr(wHighscore, "                        ");
+		for (i = 0; i < MAX_NUMBER_HIGHSCORE_ENTRIES; i++) {
+			snprintf(highscoreBuffer, sizeof(highscoreBuffer), "%s.........%2.7d",
+				 highscore.normal[i].name, highscore.normal[i].score);
+			waddstr(wHighscore, highscoreBuffer);
+		}
+	
 	}
 
+	/* info text */
 	wStartText = newpad(1, 20);
 	wclear(wStartText);
 	wattrset(wStartText, COLOR_PAIR(RED));
 	waddstr(wStartText, "Press SPACE to start");
 	
+	/* place title, aliens and text on wTitleScreen */
 	x = (SCREENWIDTH / 2) - (41 / 2);
 	y = 0;
 	copywin(wTitleText, wTitleScreen, 0, 0, y, x, y + 3, x + 40, 0);
 
-	x = (SCREENWIDTH / 2) - (11 / 2);
-	y = 8;
-	copywin(wAliens, wTitleScreen, 0, 0, y, x , y + 6, x + 10, 0);
+	if (fShowHighscore == 0) {
+		x = (SCREENWIDTH / 2) - (24 / 2);
+		y = 6;
+		copywin(wEmpty, wTitleScreen, 0, 0, y, x , y + 11, x + 23, 0);
+
+		x = (SCREENWIDTH / 2) - (11 / 2);
+		y = 8;
+		copywin(wAliens, wTitleScreen, 0, 0, y, x , y + 6, x + 10, 0);
+	} else {
+		x = (SCREENWIDTH / 2) - (11 / 2);
+		y = 8;
+		copywin(wEmpty, wTitleScreen, 0, 0, y, x , y + 6, x + 10, 0);
+
+		x = (SCREENWIDTH / 2) - (24 / 2);
+		y = 6;
+		copywin(wHighscore, wTitleScreen, 0, 0, y, x , y + 11, x + 23, 0);
+	}
 
 	x = (SCREENWIDTH / 2) - (20 / 2);
 	y = SCREENHEIGHT - 2;
