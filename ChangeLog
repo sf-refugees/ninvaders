@@ -1,3 +1,9 @@
+2003-05-06  Sebastian Gutsfeld  <segoh@gmx.net>
+
+	* aliens.c (aliensMissileMove): added test if there is an alien
+	ship left when starting a new missile; this was the bug which is
+	responsible for freezing the game when shooting at the last alien
+
 2003-05-05  Sebastian Gutsfeld  <segoh@gmx.net>
 
 	* nInvaders.c (readInput): updated readInput for reading input in
