@@ -1,4 +1,9 @@
 2003-04-22  Alexander Hollinger <alexander.hollinger@gmx.net>
+
+	* globals.c (doSleep): added again. still needed in 
+	  view.c. added "#ifdef win32" instruction again.
+
+2003-04-22  Alexander Hollinger <alexander.hollinger@gmx.net>
 	
 	* globals.c (doSleep): deleted method. not used any more.
 

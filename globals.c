@@ -32,6 +32,21 @@
 #define RELEASE 11
 
 
+
+#ifdef WIN32
+#define usleep(x) Sleep(x/1000)
+#endif
+
+
+/**
+ * sleep for specified time
+ */
+void doSleep(int microseconds)
+{
+        usleep(microseconds);
+}
+
+
 /**
  * show version information
  */
