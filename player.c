@@ -3,16 +3,18 @@
 #include "ufo.h"
 #include "nInvaders.h"
 
-struct structPlayer {
+typedef struct Player Player;
+
+struct Player {
 	int posX;	  // horizontal position of player
 	int posY;	  // vertical position of player
 	int speed;	  // 0: no movement; 1: one per turn; etc.
 	int missileFired; // 0: missile not running; 1: missile running
 	int missileX;	  // horizontal position of missile
 	int missileY;	  // vertical position of missile
-} p;
-	
-//struct structPlayer p;
+};
+       
+Player player;
 
 /**
  * initialize player attributes
@@ -20,20 +22,20 @@ struct structPlayer {
 void playerReset()
 {
 	// if missile was fired clear that position
-	if (p.missileFired == 1) {	
-		playerMissileClear(p.missileX, p.missileY);
+	if (player.missileFired == 1) {	
+		playerMissileClear(player.missileX, player.missileY);
 	}
 	
-	playerClear(p.posX, p.posY);	// clear old position of player
+	playerClear(player.posX, player.posY);	// clear old position of player
 	
-	p.posY = PLAYERPOSY;	// set vertical Position
-	p.posX = 0;		// set horizontal Position
-	p.speed = 1;
-	p.missileFired = 0;
-	p.missileX=0; 
-	p.missileY=0; 
+	player.posY = PLAYERPOSY;	// set vertical Position
+	player.posX = 0;		// set horizontal Position
+	player.speed = 1;
+	player.missileFired = 0;
+	player.missileX=0; 
+	player.missileY=0; 
 
-	playerDisplay(p.posX, p.posY);	// display new position of player
+	playerDisplay(player.posX, player.posY);	// display new position of player
 }
 
 
@@ -42,9 +44,9 @@ void playerReset()
  */
 static void playerMove(int newPosX)
 {
-	playerClear(p.posX, p.posY);	 // clear sprite
-	p.posX = newPosX;	 // make movement
-  	playerDisplay(p.posX, p.posY); // display sprite
+	playerClear(player.posX, player.posY);	 // clear sprite
+	player.posX = newPosX;	 // make movement
+  	playerDisplay(player.posX, player.posY); // display sprite
 }
 
 
@@ -54,9 +56,9 @@ static void playerMove(int newPosX)
 void playerMoveLeft()
 {
 	// check if space between player and border of screen is big enough 
-	if (p.posX > 0 + p.speed) {
+	if (player.posX > 0 + player.speed) {
 		// desired movement is possible
-		playerMove(p.posX - p.speed);
+		playerMove(player.posX - player.speed);
 	} else {
 		// space too small, move to left-most position
 		playerMove(0);
@@ -70,9 +72,9 @@ void playerMoveLeft()
 void playerMoveRight()
 {
 	// check if space between player and border of screen is big enough 
-	if (p.posX < SCREENWIDTH - PLAYERWIDTH - p.speed) {
+	if (player.posX < SCREENWIDTH - PLAYERWIDTH - player.speed) {
 		// desired movement is possible
-		playerMove(p.posX + p.speed);
+		playerMove(player.posX + player.speed);
 	} else {
 		// space too small, move to right-most position
 		playerMove(SCREENWIDTH - PLAYERWIDTH);
@@ -85,7 +87,7 @@ void playerMoveRight()
  */
 void playerTurboOn()
 {
-	p.speed = 2;
+	player.speed = 2;
 }
 
 
@@ -94,7 +96,7 @@ void playerTurboOn()
  */
 void playerTurboOff()
 {
-	p.speed = 1;
+	player.speed = 1;
 }
 
 
@@ -108,7 +110,7 @@ int playerHitCheck(int hostileShotX, int hostileShotY)
 	// if shot reached vertikal position of player
 	if (hostileShotY == PLAYERPOSY) {
 		// if shot hits player
-		if (hostileShotX >= p.posX && hostileShotX <= p.posX + PLAYERWIDTH -1) {
+		if (hostileShotX >= player.posX && hostileShotX <= player.posX + PLAYERWIDTH -1) {
 			fPlayerWasHit = 1;		// set return value
 		}
 	}
@@ -123,10 +125,10 @@ int playerHitCheck(int hostileShotX, int hostileShotY)
 void playerLaunchMissile()
 {
 	// only launch missile if no other is on its way
-	if (p.missileFired == 0) {
-		p.missileFired = 1;	// missile is on its way
-		p.missileX = p.posX + PLAYERWIDTH / 2;	// launched from the middle of player...
-		p.missileY = PLAYERPOSY;	// ...at same horizontal position
+	if (player.missileFired == 0) {
+		player.missileFired = 1;	// missile is on its way
+		player.missileX = player.posX + PLAYERWIDTH / 2;	// launched from the middle of player...
+		player.missileY = PLAYERPOSY;	// ...at same horizontal position
 	}
 }
 
@@ -136,7 +138,7 @@ void playerLaunchMissile()
  */
 static void playerReloadMissile()
 {
-	p.missileFired = 0;	// no player missile flying
+	player.missileFired = 0;	// no player missile flying
 }
 
 
@@ -150,28 +152,28 @@ int playerMoveMissile()
 	int alienTypeHit = 0;
 
 	// only do movements if there is a missile to move
-	if (p.missileFired == 1) {
+	if (player.missileFired == 1) {
 		
-		playerMissileClear(p.missileX, p.missileY);		// clear old missile position
-		playerDisplay(p.posX, p.posY); // todo: check if this can be removed later if missiled is fired, 
+		playerMissileClear(player.missileX, player.missileY);		// clear old missile position
+		playerDisplay(player.posX, player.posY); // todo: check if this can be removed later if missiled is fired, 
 						//the middle of player is cleared
-		p.missileY--;						// move missile		
+		player.missileY--;						// move missile		
 
 		// if missile out of battlefield
-		if (p.missileY < 0) {
+		if (player.missileY < 0) {
 			playerReloadMissile();				// reload missile
 		} else {
-			playerMissileDisplay(p.missileX, p.missileY);	// display missile at new position
+			playerMissileDisplay(player.missileX, player.missileY);	// display missile at new position
 		}
 
 		// if missile hits an alien (TODO)
-		alienTypeHit = aliensHitCheck(p.missileX, p.missileY);
+		alienTypeHit = aliensHitCheck(player.missileX, player.missileY);
 		if (alienTypeHit != 0) {
 			
 			doScoring(alienTypeHit);			// increase score
 			playerReloadMissile();				// reload missile
 
-			aliensClear(a.posX, a.posY, a.right, a.bottom); // clear old posiiton of aliens
+			aliensClear(aliens.posX, aliens.posY, aliens.right, aliens.bottom); // clear old posiiton of aliens
 			
 			render();
 			if (shipnum == 0) {
@@ -184,18 +186,18 @@ int playerMoveMissile()
 				weite = 0;
 			}
 			
-			playerMissileClear(p.missileX, p.missileY);	// clear old missile position
-			aliensDisplay(a.posX, a.posY, a.right, a.bottom);  // display aliens
+			playerMissileClear(player.missileX, player.missileY);	// clear old missile position
+			aliensDisplay(aliens.posX, aliens.posY, aliens.right, aliens.bottom);  // display aliens
 		}
 		
 		// if missile hits a bunker
-		if (bunkersHitCheck(p.missileX, p.missileY) == 1) {
-			bunkersClearElement(p.missileX, p.missileY);	// clear element of bunker
+		if (bunkersHitCheck(player.missileX, player.missileY) == 1) {
+			bunkersClearElement(player.missileX, player.missileY);	// clear element of bunker
 			playerReloadMissile();				// reload player missile
 		}
 
 		// if missile hits ufo
-		if (ufoHitCheck(p.missileX, p.missileY) == 1) {
+		if (ufoHitCheck(player.missileX, player.missileY) == 1) {
 			doScoring(UFO_ALIEN_TYPE);
 			playerReloadMissile();
 		}
@@ -209,6 +211,6 @@ int playerMoveMissile()
  * let player explode
  */
 void playerExplode(){
-	playerExplosionDisplay(p.posX, p.posY);
-	playerDisplay(p.posX, p.posY);
+	playerExplosionDisplay(player.posX, player.posY);
+	playerDisplay(player.posX, player.posY);
 }
