@@ -3,9 +3,9 @@
 #include "globals.h"
 
 
-#define MAJOR 0
-#define MINOR 0
-#define RELEASE 9
+#define MAJOR    0
+#define MINOR    0
+#define RELEASE 10
 
 
 #ifdef WIN32
