@@ -48,6 +48,7 @@ WINDOW *wBunkers;
 WINDOW *wGameOver;
 WINDOW *wUfo;
 WINDOW *wStatus;
+WINDOW *wTitleScreen;
 
 /**
  * initialize player sprites
@@ -217,16 +218,18 @@ void aliensRefresh(int level, int *pAliens)
 	
 	// draw alien if there is one
 	for (row = 0; row < ALIENS_MAX_NUMBER_Y*2; row++) {			
-		for (k=0;k<ALIENS_MAX_NUMBER_X;k++) {
+		for (k = 0; k < ALIENS_MAX_NUMBER_X; k++) {
 			if ((row % 2) == 0) {			// display aliens every even row
 				alienType = *(pAliens + c * (ALIENS_MAX_NUMBER_X) + k); 	// get type of alien //alienBlock[c][k]
 				
 				if (alienType != 0) {		// if there is an alien to display
-					wattrset(wAliens,COLOR_PAIR(colors[alienType-1]));		  // set color
+					wattrset(wAliens,COLOR_PAIR(colors[alienType-1]));		   // set color
 					waddch(wAliens,ships[frame%2][alienType-1+(3*((level-1)%3))][0]);  // set char1
 					waddch(wAliens,ships[frame%2][alienType-1+(3*((level-1)%3))][1]);  // set char2
 					waddch(wAliens,ships[frame%2][alienType-1+(3*((level-1)%3))][2]);  // set char3
-					if (alienType>4) {*(pAliens + c * (ALIENS_MAX_NUMBER_X) + k)=(alienType+1)%9;} // todo: what's that? If alien_type > 4 then do a modulo operation???
+					if (alienType > 4) {
+						*(pAliens + c * ALIENS_MAX_NUMBER_X + k) = (alienType + 1) % 9;
+					} // todo: what's that? If alien_type > 4 then do a modulo operation???
 				} else {
 					waddstr(wAliens,"   ");	// no alien
 				}
@@ -296,7 +299,7 @@ void bunkersClearElement(int x, int y)
  */
 void ufoRefresh()
 {
-	char ufo[4][5] = {"<o o>", "<oo >", "<o o>", "< oo>"};
+	char ufo[4][6] = {"<o o>", "<oo >", "<o o>", "< oo>"};
 	static int frame = 0;
 
 	wclear(wUfo);
@@ -361,12 +364,105 @@ static void gameOverInit()
 }
 
 /**
- * display gameover graphic
+ * display game over graphic
  */ 
-void gameOverDisplay(int x, int y)
+void gameOverDisplay()
 {
+	int x = (SCREENWIDTH / 2) - (31 / 2);
+	int y = (SCREENHEIGHT / 2) - (13 / 2);
 	copywin(wGameOver, wBattleField, 0, 0, y, x, y + 12, x + 30, 0);
 	wrefresh(wBattleField);
+}
+
+
+/**
+ * initialize title screen
+ */
+static void titleScreenInit()
+{
+	wTitleScreen = newpad(SCREENHEIGHT, SCREENWIDTH);
+	wclear(wTitleScreen);
+}
+
+
+/**
+ * display title screen
+ */
+void titleScreenDisplay()
+{
+	static int frame = 0;
+	int x, y;
+	int i;
+	WINDOW *wTitleText;
+	WINDOW *wAliens;
+	WINDOW *wStartText;
+	char ufo[4][6] = {"<o o>", "<oo >", "<o o>", "< oo>"};
+	char aliens[2][9][3+1] = {
+		{",^,", "_O-", "-o-",  "o=o", "<O>", "_x_", "*^*", "\\_/", "o o"},
+		{".-.", "-O_", "/o\\", "o-o", "<o>", "-x-", "o^o", "/~\\", "oo "}
+	};
+	int score[3] = {200, 150, 100};
+	int colors[9] = {RED, GREEN, BLUE, RED, GREEN, BLUE, RED, GREEN, BLUE};
+	char buffer[12];
+	static int alien_type = 0;
+
+	wTitleText = newpad(4, 41);
+	wclear(wTitleText);
+	wattrset(wTitleText, COLOR_PAIR(YELLOW));
+	waddstr(wTitleText, "        ____                 __          ");
+	waddstr(wTitleText, "  ___  /  _/__ _  _____  ___/ /__ _______");
+        waddstr(wTitleText, " / _ \\_/ // _ \\ |/ / _ `/ _  / -_) __(_-<");
+	waddstr(wTitleText, "/_//_/___/_//_/___/\\_,_/\\_,_/\\__/_/ /___/");
+
+	frame++;
+	wAliens = newpad(7, 11);
+	wclear(wAliens);
+	snprintf(buffer, sizeof(buffer),"%s = 500", ufo[frame % 4]);
+	wattrset(wAliens, COLOR_PAIR(MAGENTA));
+	waddstr(wAliens, buffer);
+	if ((frame = frame % 60) == 0) {
+		alien_type = 0;
+	} else if (frame == 20) {
+		alien_type = 3;
+	} else if (frame == 40) {
+		alien_type = 6;
+	}
+	for (i = alien_type; i < alien_type + 3; i++) {
+		waddstr(wAliens, "           ");
+		snprintf(buffer, sizeof(buffer), "%s   = %d", aliens[frame % 2][i], score[i % 3]);
+		wattrset(wAliens, COLOR_PAIR(colors[i]));
+		waddstr(wAliens, buffer);
+	}
+
+	wStartText = newpad(1, 20);
+	wclear(wStartText);
+	wattrset(wStartText, COLOR_PAIR(RED));
+	waddstr(wStartText, "Press SPACE to start");
+	
+	x = (SCREENWIDTH / 2) - (41 / 2);
+	y = 0;
+	copywin(wTitleText, wTitleScreen, 0, 0, y, x, y + 3, x + 40, 0);
+
+	x = (SCREENWIDTH / 2) - (11 / 2);
+	y = 8;
+	copywin(wAliens, wTitleScreen, 0, 0, y, x , y + 6, x + 10, 0);
+
+	x = (SCREENWIDTH / 2) - (20 / 2);
+	y = SCREENHEIGHT - 2;
+	copywin(wStartText, wTitleScreen, 0, 0, y, x, y, x + 19, 0);
+	
+	copywin(wTitleScreen, wBattleField, 0, 0, 0, 0, SCREENHEIGHT-1, SCREENWIDTH-1, 0);
+	
+	wrefresh(wBattleField);
+}
+
+
+/**
+ * clear title screen
+ */
+void titleScreenClear()
+{
+	battleFieldClear();
 }
 
 
@@ -425,6 +521,16 @@ static void battleFieldInit()
 	mvwin(wBattleField, 0, 0);					// move window
 }
 
+
+/**
+ * clear battlefield
+ */
+void battleFieldClear()
+{
+	copywin(wEmpty,wBattleField,0,0,0,0,SCREENHEIGHT-1,SCREENWIDTH-1,0);
+}
+
+
 /**
  * refresh screen so that modified graphic buffers get visible
  */
@@ -435,6 +541,7 @@ void refreshScreen()
 
 }	
 
+
 /**
  * do proper cleanup
  */
@@ -443,6 +550,7 @@ static void finish(int sig)
 	endwin();	// <curses.h> reset terminal into proper non-visual mode
 	exit(0);
 }
+
 
 /**
  * initialize n_courses
@@ -476,6 +584,6 @@ void graphicEngineInit()
 	ufoInit();
 	gameOverInit();
 	statusInit();
-
+	titleScreenInit();
 }
 
