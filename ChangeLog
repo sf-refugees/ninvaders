@@ -1,3 +1,10 @@
+
+****** Release 0.1.1 ******
+
+2003-04-22  Alexander Hollinger <alexander.hollinger@gmx.net>
+	
+	* globas.c: changed version from 0.0.11 to 0.1.1
+
 2003-05-06  Sebastian Gutsfeld  <segoh@gmx.net>
 
 	* aliens.c (aliensMissileMove): added test if there is an alien
