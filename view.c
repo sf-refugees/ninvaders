@@ -417,7 +417,7 @@ void graphicEngineInit()
 	init_pair(MAGENTA, COLOR_MAGENTA, COLOR_BLACK);	// <curses.h> define color-pair
 	init_pair(WHITE, COLOR_WHITE, COLOR_BLACK);	// <curses.h> define color-pair
 	
-	timeout(0); 			// <curses.h> do not wait for input
+	//timeout(0); 			// <curses.h> do not wait for input
 
 	// initialize sprites 
 	battleFieldInit();

@@ -1,12 +1,23 @@
 #include <stdio.h>
 #include <string.h>
+#include <sys/time.h>
 #include "nInvaders.h"
 #include "player.h"
 #include "aliens.h"
 #include "ufo.h"
-
-int lives;
+#define FPS 50
+   int lives;
 long score;
+
+int status; // status handled in timer
+#define GAME_LOOP 1
+#define GAME_NEXTLEVEL 2
+#define GAME_PAUSED 3
+#define GAME_OVER 4
+#define GAME_EXIT 5
+#define GAME_HIGHSCORE 6
+
+
 
 
 /**
@@ -85,19 +96,6 @@ static void finish(int sig)
 }
 
 
-
-void game_over(int a) 
-{
-	int xo, yo;
-	xo = (SCREENWIDTH / 2) - (31 / 2);
-	yo = (SCREENHEIGHT / 2) - (13 / 2);
-	gameOverDisplay(xo, yo);
-	
-	doSleep(3*1000*1000);
-	finish(0);
-}
-
-
 void drawscore()
 {
 	statusDisplay(level, score, lives);
@@ -107,13 +105,10 @@ void drawscore()
 /**
  * reads input from keyboard and do action
  */
-int readInput()
+void readInput()
 {
-	int value = 0;
 	int ch;
 	static int lastmove;
-
-	doSleep(1);
 
 	ch = getch();		// get key pressed
 
@@ -144,13 +139,16 @@ int readInput()
 
 	} else if (ch == 'p') {			// pause game until 'p' pressed again
 
-		doSleep(100000);
-		while (getch() != 'p')
-			doSleep(100000);
+		// set status to game paused
+		if (status == GAME_PAUSED) {
+			status = GAME_LOOP;
+		} else {
+			status = GAME_PAUSED;
+		}
 
 	} else if (ch == 'W') {			// cheat: goto next level
 
-		value = 1;
+		status = GAME_NEXTLEVEL;
 
 	} else if (ch == 'L') {			// cheat: one more live
 
@@ -159,7 +157,7 @@ int readInput()
 		
 	} else if ((ch == 'q' || ch == 27)) {	// quit game
 
-		finish(0);
+		status = GAME_EXIT;
 
 	} else {		// disable turbo mode if key is not kept pressed
 
@@ -167,67 +165,58 @@ int readInput()
 
 	}
 
-	return value;
 }
 
 
-int main(int argc, char **argv)
+/**
+ * timer
+ * this method is executed every 1 / FPS seconds  
+ */
+void handleTimer()
 {
-	int aliens_move_counter = 0; 
-	int aliens_shot_counter = 0;
-	int player_shot_counter = 0;
-	int ufo_move_counter = 0;
-	int gotoNextLevel = 0;
+	static int aliens_move_counter = 0; 
+	static int aliens_shot_counter = 0;
+	static int player_shot_counter = 0;
+	static int ufo_move_counter = 0;
 	
-	// initialize variables 
-
-	weite = 0;
-	score = 0;
-	lives = 3;
-	skill_level = 1;
-
-	
-	evaluateCommandLine(argc, argv);	// evaluate command line parameters
-	graphicEngineInit();			// initialize graphic engine
-	
+	switch (status) {
+		
+		// go to next level
+		case GAME_NEXTLEVEL:
 			
-
-
-	// start game
-	for (level = 1;; level++) {		
-
-		initLevel();			// initialize level
-		
-		
-		aliens_move_counter = 0; 
-		aliens_shot_counter = 0;
-		player_shot_counter = 0;
-		ufo_move_counter = 0;
+			level++;	// increase level
+			
+			initLevel();	// initialize level
 	
+			aliens_move_counter = 0; 
+			aliens_shot_counter = 0;
+			player_shot_counter = 0;
+			ufo_move_counter = 0;
 		
-		weite = (shipnum+(skill_level*10)-(level*5)+5)/10;
-
-		if (weite < 0) {
-			weite = 0;
-		}
-
-
-		// game loop 
-		do {
-			gotoNextLevel=0;
-
+			weite = (shipnum+(skill_level*10)-(level*5)+5)/10;
+	
+			if (weite < 0) {
+				weite = 0;
+			}
+			
+			// change status and start game!
+			status = GAME_LOOP;
+		
+		
+		// do game handling
+		case GAME_LOOP:
+		
 			// move aliens			
 			if (aliens_move_counter == 0 && aliensMove() == 1) {
 				// aliens reached player
 				lives = 0;
-				game_over(1);
-				
+				status = GAME_OVER;
 			}
 			
 			// move player missile			
 			if (player_shot_counter == 0 && playerMoveMissile() == 1) {
 				// no aliens left
-				gotoNextLevel = 1;
+				status = GAME_NEXTLEVEL;
 			}
 
 			// move aliens' missiles
@@ -237,7 +226,7 @@ int main(int argc, char **argv)
 				drawscore();	                // draw score
 				playerExplode();		// display some explosion graphics
 				if (lives == 0) {		// if no lives left ...
-					game_over(1);		// ... exit game
+					status = GAME_OVER;		// ... exit game
 				}
 			}
 
@@ -253,17 +242,76 @@ int main(int argc, char **argv)
 			if (ufo_move_counter++ >= 3) {ufo_move_counter=0;}           // speed of ufo
 
 			refreshScreen();
-
-			// do movements and key-checking; if cheat-warping goto next level
-			if (readInput() == 1) {
-				gotoNextLevel = 1;
-			}
-
+			break;
 			
-		} while (gotoNextLevel == 0);
+			
+		// game is paused	
+		case GAME_PAUSED:
+			break;
+			
+
+		// game over			
+		case GAME_OVER:
+			// todo: let player decide if he wants to start over or quit.
+			gameOverDisplay((SCREENWIDTH / 2) - (31 / 2), (SCREENHEIGHT / 2) - (13 / 2));
+			doSleep(3*1000*1000);
+			status = GAME_EXIT;
+			break;
+			
+		
+		// exit game
+		case GAME_EXIT:
+			finish(0);
+			break;
+			
+			
+		// display highscore
+		case GAME_HIGHSCORE:
+			break;
+			
+	}
+}
 
 
-	} // for (level...
+/**
+ * set up timer
+ */
+void setUpTimer()
+{
+	struct itimerval myTimer;
+	myTimer.it_value.tv_sec = 0;
+	myTimer.it_value.tv_usec = 1000000 / FPS;
+	myTimer.it_interval.tv_sec = 0;
+	myTimer.it_interval.tv_usec = 1000000 / FPS;
+	setitimer(ITIMER_REAL, &myTimer, NULL);
+	signal(SIGALRM, handleTimer);
+}
+
+
+int main(int argc, char **argv)
+{
+	
+	// initialize variables 
+
+	weite = 0;
+	score = 0;
+	lives = 3;
+	level = 0;
+	skill_level = 1;
+	
+	evaluateCommandLine(argc, argv);	// evaluate command line parameters
+	graphicEngineInit();			// initialize graphic engine
+	
+	// set up timer/ game handling
+	setUpTimer();		
+	status = GAME_NEXTLEVEL;
+
+	// read keyboard input
+	do {
+		// do movements and key-checking
+		readInput();
+	} while (0 == 0);
+
 
 	return 0;
 	

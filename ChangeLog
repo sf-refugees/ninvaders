@@ -1,3 +1,27 @@
+2003-04-16  Alexander Hollinger <alexander.hollinger@gmx.net>
+
+	* nInvaders.c: added a real-time timer that does 50 fps. if you
+	  want it slower toggle the constant FPS. the higher the slower.
+	  A timer is created and does all the gaming stuff while key
+	  checking is still done in (main). Gamehandling is done by
+	  simulating a deterministic finite automaton by setting the 
+	  'status'-attribute to e.g. GAME_LOOP, GAME_PAUSED, GAME_EXIT.
+	  the following methods were modified/ added:
+	  (setUpTimer): creates and initializes timer
+	  (handleTimer): this method is called every 1/FPS seconds and 
+	                 contains most code from old (main)
+	  (readInput): changed so that the 'status'-variable is affected.
+	               pressing of 'p' now changes 'status'
+	  (main): most code moved to (handleTimer), calls setUpTimer and 
+	  	  sets 'status' to GAME_NEXTLEVEL
+	  (gameOver): completely moved to handleTimer
+	 
+	 * view.c (graphicEngineInit): removed 'timeout(0);' no longer 
+	   needed as we now hava a timer. another advantage: call to
+	   (readInput) in nInvaders.c no longer called permanently. 
+	   in (readInput) the getch()-call waits till a key is pressed.
+	   doSleep(1) no longer needed in nInvaders.c (readInput).
+
 2003-04-08  Sebastian Gutsfeld  <segoh@gmx.net>
 
 	* ufo.c:replaced 'u' with 'ufo' (see ufo.h) and 'a' with 'aliens'
