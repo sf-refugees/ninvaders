@@ -29,10 +29,10 @@ WINDOW *wUfo;
  */
 static void playerInit()
 {
-	wPlayer = newpad(1, PLAYERWIDTH);	// new pad with appropriate size
+	wPlayer = newpad(1, PLAYERWIDTH);       // new pad with appropriate size
 	wclear(wPlayer);			// clear pad
         wattrset(wPlayer,COLOR_PAIR(YELLOW));	// set color
-        waddstr(wPlayer,"/-^-\\");	// set sprite
+        waddstr(wPlayer,"/-^-\\");	        // set sprite
 }
 
 
@@ -275,8 +275,8 @@ void ufoRefresh()
 	static int frame = 0;
 
 	wclear(wUfo);
-        wattrset(wUfo,COLOR_PAIR(MAGENTA));
-	waddstr(wUfo, ufo[frame%=4]);
+        wattrset(wUfo, COLOR_PAIR(MAGENTA));
+	waddstr(wUfo, ufo[frame % 4]);
 
 	frame++;
 }
@@ -287,9 +287,9 @@ void ufoRefresh()
  */
 static void ufoInit()
 {
-	wUfo = newpad(1, UFOWIDTH);	 // new pad with appropriate size
-	wclear(wUfo);    		 // clear pad
-        wattrset(wUfo,COLOR_PAIR(MAGENTA));	 // set color
+	wUfo = newpad(1, UFOWIDTH);	     // new pad with appropriate size
+	wclear(wUfo);    		     // clear pad
+        wattrset(wUfo, COLOR_PAIR(MAGENTA)); // set color
 }
 
 
@@ -298,7 +298,7 @@ static void ufoInit()
  */
 void ufoDisplay(int x, int y)
 {
-	copywin(wUfo,wBattleField,0,0,y,x,y,x+UFOWIDTH-1,0);
+	copywin(wUfo, wBattleField, 0, 0, y, x, y, x + UFOWIDTH - 1, 0);
 }
 
 
@@ -307,7 +307,7 @@ void ufoDisplay(int x, int y)
  */
 void ufoClear(int x, int y) 
 {
-	copywin(wEmpty,wBattleField,0,0,y,x,y,x+UFOWIDTH-1,0);
+	copywin(wEmpty, wBattleField, 0, 0, y, x, y, x + UFOWIDTH - 1, 0);
 }
 
 
