@@ -626,6 +626,7 @@ void graphicEngineInit()
 	init_pair(WHITE, COLOR_WHITE, COLOR_BLACK);	// <curses.h> define color-pair
 	
 	//timeout(0); 			// <curses.h> do not wait for input
+    curs_set(0); 			// <curses.h> do not show annoying cursor jumping everywhere
 
 	// initialize sprites 
 	battleFieldInit();
