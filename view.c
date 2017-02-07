@@ -134,7 +134,8 @@ void playerExplosionDisplay(int x, int y)
 		wrefresh(wBattleField); 	// refresh battelfield to display explosion frames
 		doSleep(100000);		// play animation not too fast
 	}
-	
+
+	delwin(wPlayerExplosion);
 
 } // todo: kann man bestimmt noch besser machen.
 
@@ -605,6 +606,20 @@ void refreshScreen()
  */
 static void finish(int sig)
 {
+	delwin(wBattleField);
+	delwin(wEmpty);
+	delwin(wScores);
+
+	delwin(wPlayer);
+	delwin(wPlayerMissile);
+	delwin(wAliens);
+	delwin(wAliensMissile);
+	delwin(wBunkers);
+	delwin(wGameOver);
+	delwin(wUfo);
+	delwin(wStatus);
+	delwin(wTitleScreen);
+
 	endwin();	// <curses.h> reset terminal into proper non-visual mode
 	exit(0);
 }
