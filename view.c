@@ -434,7 +434,7 @@ void titleScreenDisplay()
 	wattrset(wTitleText, COLOR_PAIR(YELLOW));
 	waddstr(wTitleText, "        ____                 __          ");
 	waddstr(wTitleText, "  ___  /  _/__ _  _____  ___/ /__ _______");
-        waddstr(wTitleText, " / _ \\_/ // _ \\ |/ / _ `/ _  / -_) __(_-<");
+	waddstr(wTitleText, " / _ \\_/ // _ \\ |/ / _ `/ _  / -_) __(_-<");
 	waddstr(wTitleText, "/_//_/___/_//_/___/\\_,_/\\_,_/\\__/_/ /___/");
 
 
@@ -507,6 +507,11 @@ void titleScreenDisplay()
 	copywin(wTitleScreen, wBattleField, 0, 0, 0, 0, SCREENHEIGHT-1, SCREENWIDTH-1, 0);
 	
 	wrefresh(wBattleField);
+
+	delwin(wTitleText);
+	delwin(wAliens);
+	delwin(wHighscore);
+	delwin(wStartText);
 }
 
 
@@ -626,7 +631,7 @@ void graphicEngineInit()
 	init_pair(WHITE, COLOR_WHITE, COLOR_BLACK);	// <curses.h> define color-pair
 	
 	//timeout(0); 			// <curses.h> do not wait for input
-    curs_set(0); 			// <curses.h> do not show annoying cursor jumping everywhere
+	curs_set(0); 			// <curses.h> do not show annoying cursor jumping everywhere
 
 	// initialize sprites 
 	battleFieldInit();
