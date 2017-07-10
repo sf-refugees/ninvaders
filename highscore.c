@@ -231,7 +231,7 @@ void addEntry(char *name, int score, int hsType)
  			i++;
  		}
 		
- 		for (j = MAX_HIGHSCORE_ENTRIES; j > i; j--) {
+ 		for (j = MAX_HIGHSCORE_ENTRIES - 1; j > i; j--) {
  			highscore.beginner[j] = highscore.beginner[j - 1];
  		}
 		
@@ -244,7 +244,7 @@ void addEntry(char *name, int score, int hsType)
  			i++; 
  		} 
 		
- 		for (j = MAX_HIGHSCORE_ENTRIES; j > i; j--) { 
+ 		for (j = MAX_HIGHSCORE_ENTRIES - 1; j > i; j--) { 
  			highscore.normal[j] = highscore.normal[j - 1]; 
  		} 
 		
@@ -257,7 +257,7 @@ void addEntry(char *name, int score, int hsType)
  			i++; 
  		} 
 		
- 		for (j = MAX_HIGHSCORE_ENTRIES; j > i; j--) { 
+ 		for (j = MAX_HIGHSCORE_ENTRIES - 1; j > i; j--) { 
  			highscore.expert[j] = highscore.expert[j - 1]; 
  		} 
 		
