@@ -396,7 +396,7 @@ void titleScreenDisplay()
 	int x, y;
 	int i;
 	WINDOW *wTitleText;
-	WINDOW *wAliens;
+	WINDOW *wAliensTitle;
 	WINDOW *wHighscore;
 	WINDOW *wStartText;
 	char ufo[4][6] = {"<o o>", "<oo >", "<o o>", "< oo>"};
@@ -440,22 +440,22 @@ void titleScreenDisplay()
 	waddstr(wTitleText, "/_//_/___/_//_/___/\\_,_/\\_,_/\\__/_/ /___/");
 
 
-	wAliens = newpad(7, 11);
+	wAliensTitle = newpad(7, 11);
 	wHighscore = newpad(12, 24);
 	if (fShowHighscore == 0) {
 		
 		/* alien animation with score */
 
-		wclear(wAliens);
+		wclear(wAliensTitle);
 		snprintf(buffer, sizeof(buffer),"%s = 500", ufo[frame % 4]);
-		wattrset(wAliens, COLOR_PAIR(MAGENTA));                      
-		waddstr(wAliens, buffer); // print ufo
+		wattrset(wAliensTitle, COLOR_PAIR(MAGENTA));                      
+		waddstr(wAliensTitle, buffer); // print ufo
 
 		for (i = alien_type; i < alien_type + 3; i++) {
-			waddstr(wAliens, "           ");
+			waddstr(wAliensTitle, "           ");
 			snprintf(buffer, sizeof(buffer), "%s   = %d", aliens[frame % 2][i], score[i % 3]);
-			wattrset(wAliens, COLOR_PAIR(colors[i]));
-			waddstr(wAliens, buffer); // print aliens
+			wattrset(wAliensTitle, COLOR_PAIR(colors[i]));
+			waddstr(wAliensTitle, buffer); // print aliens
 		}
 
 	} else {
@@ -491,7 +491,7 @@ void titleScreenDisplay()
 
 		x = (SCREENWIDTH / 2) - (11 / 2);
 		y = 8;
-		copywin(wAliens, wTitleScreen, 0, 0, y, x , y + 6, x + 10, 0);
+		copywin(wAliensTitle, wTitleScreen, 0, 0, y, x , y + 6, x + 10, 0);
 	} else {
 		x = (SCREENWIDTH / 2) - (11 / 2);
 		y = 8;
@@ -511,7 +511,7 @@ void titleScreenDisplay()
 	wrefresh(wBattleField);
 
 	delwin(wTitleText);
-	delwin(wAliens);
+	delwin(wAliensTitle);
 	delwin(wHighscore);
 	delwin(wStartText);
 }
