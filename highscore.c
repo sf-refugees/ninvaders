@@ -185,11 +185,13 @@ HighScore readHighScore (){
 	
 		if ( strcmp (hs_id, HIGHSCORE_ID) != 0 ) {
 			puts ("(EE) readHighScore: highscore file has wrong header");
+			fclose (fp_HighScore);
 			return standard;
 		}
 
 		if ( strcmp (hs_version, HIGHSCORE_VERSION) != 0 ) {
 			puts ("(EE) readHighScore: highscore file has wrong version number");
+			fclose (fp_HighScore);
 			return standard;
 		}
 	
