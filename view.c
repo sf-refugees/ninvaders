@@ -411,8 +411,9 @@ void titleScreenDisplay()
 	static int alien_type = 0;
 	static int fShowHighscore = 0;
 
-	/* toggle between different alien types and highscores */ 
-	if ((frame = frame++ % 180) == 0) {
+	/* toggle between different alien types and highscores */
+	frame = (frame + 1) % 180;
+	if (frame == 0) {
 		alien_type = 0;
 		fShowHighscore = 0;
 	} else if (frame == 30) {
