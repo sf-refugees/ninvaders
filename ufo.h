@@ -33,7 +33,7 @@ struct Ufo {
   int posY; // vertical position of aliens
 };
 
-Ufo ufo;
+extern Ufo ufo;
 
 void ufoReset();
 int ufoShowUfo();

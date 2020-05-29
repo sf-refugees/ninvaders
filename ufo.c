@@ -26,6 +26,7 @@
 #include "nInvaders.h"
 
 static int fShowUfo = 0;
+Ufo ufo;
 
 /**
  * initialize ufo attributes

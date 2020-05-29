@@ -44,9 +44,9 @@ void drawscore();
 void doScoring(int alienType);
 
 // todo: let's try to not having to declare these "public"
-int weite;
-int level;
-int skill_level;
+extern int weite;
+extern int level;
+extern int skill_level;
 
 // included from globals.h
 extern void doSleep();
