@@ -26,7 +26,7 @@
 
 #define MAJOR_VERSION 0
 #define MINOR_VERSION 1
-#define RELEASE_VERSION 1
+#define RELEASE_VERSION 2
 
 extern void doSleep();
 
