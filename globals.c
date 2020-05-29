@@ -25,9 +25,6 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#define MAJOR 0
-#define MINOR 1
-#define RELEASE 1
 
 #ifdef WIN32
 #define usleep(x) Sleep(x / 1000)
@@ -42,7 +39,8 @@ void doSleep(int microseconds) { usleep(microseconds); }
  * show version information
  */
 void showVersion() {
-  fprintf(stderr, "*** nInvaders %i.%i.%i\n", MAJOR, MINOR, RELEASE);
+  fprintf(stderr, "*** nInvaders %i.%i.%i\n", MAJOR_VERSION, MINOR_VERSION,
+          RELEASE_VERSION);
   fprintf(stderr, "*** (C)opyleft 2k2 by Dettus\n");
   fprintf(stderr, "*** dettus@matrixx-bielefeld.de\n");
   fprintf(stderr, "Additional code by Mike Saarna,\n");
