@@ -76,7 +76,8 @@ static void evaluateCommandLine(int argc, char **argv) {
 
   // -gpl : show GNU GPL
   if (argc == 2 && strcmp(argv[1], "-gpl") == 0) {
-    showGpl();
+    showGplShort();
+    exit(0);
   }
 
   // wrong command line: show usage
