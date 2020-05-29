@@ -25,5 +25,5 @@ clean:
 		rm -f nInvaders $(OFILES)
 
 distclean:
-	        rm -f nInvaders $(OFILES)
+	    rm -f nInvaders $(OFILES)
 		rm -f Makefile config.h config.status config.cache config.log

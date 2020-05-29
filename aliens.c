@@ -163,7 +163,7 @@ void render()
 	aliens.right=-1;
 	aliens.bottom=-1;
 	shipnum=0;
-	for (k=0;k<11;k++) {
+	for (k=0;k<ALIENS_MAX_NUMBER_X;k++) {
 		lowest_ship[k]=-1;
 	}
 	

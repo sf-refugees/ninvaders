@@ -134,7 +134,8 @@ void playerExplosionDisplay(int x, int y)
 		wrefresh(wBattleField); 	// refresh battelfield to display explosion frames
 		doSleep(100000);		// play animation not too fast
 	}
-	
+
+	delwin(wPlayerExplosion);
 
 } // todo: kann man bestimmt noch besser machen.
 
@@ -395,7 +396,7 @@ void titleScreenDisplay()
 	int x, y;
 	int i;
 	WINDOW *wTitleText;
-	WINDOW *wAliens;
+	WINDOW *wAliensTitle;
 	WINDOW *wHighscore;
 	WINDOW *wStartText;
 	char ufo[4][6] = {"<o o>", "<oo >", "<o o>", "< oo>"};
@@ -410,8 +411,9 @@ void titleScreenDisplay()
 	static int alien_type = 0;
 	static int fShowHighscore = 0;
 
-	/* toggle between different alien types and highscores */ 
-	if ((frame = frame++ % 180) == 0) {
+	/* toggle between different alien types and highscores */
+	frame = (frame + 1) % 180;
+	if (frame == 0) {
 		alien_type = 0;
 		fShowHighscore = 0;
 	} else if (frame == 30) {
@@ -434,26 +436,26 @@ void titleScreenDisplay()
 	wattrset(wTitleText, COLOR_PAIR(YELLOW));
 	waddstr(wTitleText, "        ____                 __          ");
 	waddstr(wTitleText, "  ___  /  _/__ _  _____  ___/ /__ _______");
-        waddstr(wTitleText, " / _ \\_/ // _ \\ |/ / _ `/ _  / -_) __(_-<");
+	waddstr(wTitleText, " / _ \\_/ // _ \\ |/ / _ `/ _  / -_) __(_-<");
 	waddstr(wTitleText, "/_//_/___/_//_/___/\\_,_/\\_,_/\\__/_/ /___/");
 
 
-	wAliens = newpad(7, 11);
+	wAliensTitle = newpad(7, 11);
 	wHighscore = newpad(12, 24);
 	if (fShowHighscore == 0) {
 		
 		/* alien animation with score */
 
-		wclear(wAliens);
+		wclear(wAliensTitle);
 		snprintf(buffer, sizeof(buffer),"%s = 500", ufo[frame % 4]);
-		wattrset(wAliens, COLOR_PAIR(MAGENTA));                      
-		waddstr(wAliens, buffer); // print ufo
+		wattrset(wAliensTitle, COLOR_PAIR(MAGENTA));                      
+		waddstr(wAliensTitle, buffer); // print ufo
 
 		for (i = alien_type; i < alien_type + 3; i++) {
-			waddstr(wAliens, "           ");
+			waddstr(wAliensTitle, "           ");
 			snprintf(buffer, sizeof(buffer), "%s   = %d", aliens[frame % 2][i], score[i % 3]);
-			wattrset(wAliens, COLOR_PAIR(colors[i]));
-			waddstr(wAliens, buffer); // print aliens
+			wattrset(wAliensTitle, COLOR_PAIR(colors[i]));
+			waddstr(wAliensTitle, buffer); // print aliens
 		}
 
 	} else {
@@ -489,7 +491,7 @@ void titleScreenDisplay()
 
 		x = (SCREENWIDTH / 2) - (11 / 2);
 		y = 8;
-		copywin(wAliens, wTitleScreen, 0, 0, y, x , y + 6, x + 10, 0);
+		copywin(wAliensTitle, wTitleScreen, 0, 0, y, x , y + 6, x + 10, 0);
 	} else {
 		x = (SCREENWIDTH / 2) - (11 / 2);
 		y = 8;
@@ -507,6 +509,11 @@ void titleScreenDisplay()
 	copywin(wTitleScreen, wBattleField, 0, 0, 0, 0, SCREENHEIGHT-1, SCREENWIDTH-1, 0);
 	
 	wrefresh(wBattleField);
+
+	delwin(wTitleText);
+	delwin(wAliensTitle);
+	delwin(wHighscore);
+	delwin(wStartText);
 }
 
 
@@ -600,6 +607,20 @@ void refreshScreen()
  */
 static void finish(int sig)
 {
+	delwin(wBattleField);
+	delwin(wEmpty);
+	delwin(wScores);
+
+	delwin(wPlayer);
+	delwin(wPlayerMissile);
+	delwin(wAliens);
+	delwin(wAliensMissile);
+	delwin(wBunkers);
+	delwin(wGameOver);
+	delwin(wUfo);
+	delwin(wStatus);
+	delwin(wTitleScreen);
+
 	endwin();	// <curses.h> reset terminal into proper non-visual mode
 	exit(0);
 }
@@ -626,6 +647,7 @@ void graphicEngineInit()
 	init_pair(WHITE, COLOR_WHITE, COLOR_BLACK);	// <curses.h> define color-pair
 	
 	//timeout(0); 			// <curses.h> do not wait for input
+	curs_set(0); 			// <curses.h> do not show annoying cursor jumping everywhere
 
 	// initialize sprites 
 	battleFieldInit();
