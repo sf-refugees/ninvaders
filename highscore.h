@@ -21,38 +21,32 @@
  *
  */
 
-
 #ifndef HIGHSCORE
 #define HIGHSCORE
 
-
 /**************************************************************************************************
- * 
+ *
  * public constants, variables, structures, declarations, macros
  *
  **************************************************************************************************/
 
-#define SIZE_HIGHSCORE_NAME     8                          /* number of letters for name        */
+#define SIZE_HIGHSCORE_NAME 8 /* number of letters for name        */
 typedef struct highscore_entry {
-        int  score;                                        /* score                             */
-        char name [SIZE_HIGHSCORE_NAME + 1];               /* player name                       */
+  int score;                          /* score                             */
+  char name[SIZE_HIGHSCORE_NAME + 1]; /* player name                       */
 } HighScoreEntry;
 
-
-#define MAX_HIGHSCORE_ENTRIES   10                         /* number of highscore entries       */
+#define MAX_HIGHSCORE_ENTRIES 10 /* number of highscore entries       */
 typedef struct highscore {
-        HighScoreEntry beginner [MAX_HIGHSCORE_ENTRIES];   /* beginner                          */
-        HighScoreEntry normal   [MAX_HIGHSCORE_ENTRIES];   /* normal                            */
-        HighScoreEntry expert   [MAX_HIGHSCORE_ENTRIES];   /* expert                            */
+  HighScoreEntry beginner[MAX_HIGHSCORE_ENTRIES]; /* beginner */
+  HighScoreEntry normal[MAX_HIGHSCORE_ENTRIES];   /* normal   */
+  HighScoreEntry expert[MAX_HIGHSCORE_ENTRIES];   /* expert   */
 } HighScore;
 
-
-HighScore readHighScore    ();
-int       writeHighScore   (HighScore);
-void      addEntry         (char*, int, int);
-
+HighScore readHighScore();
+int writeHighScore(HighScore);
+void addEntry(char *, int, int);
 
 HighScore highscore; /* todo: not a global variable! */
-
 
 #endif

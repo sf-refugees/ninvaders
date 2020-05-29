@@ -20,11 +20,10 @@
  * mailto: ninvaders-devel@lists.sourceforge.net
  *
  */
- 
 
 #include <ncurses.h>
-#include <unistd.h>
 #include <signal.h>
+#include <unistd.h>
 
 #ifndef VIEW
 #define VIEW
@@ -32,25 +31,24 @@
 #include "globals.h"
 
 #define SCREENHEIGHT 24
-#define SCREENWIDTH 80	
-	
+#define SCREENWIDTH 80
+
 #define PLAYERWIDTH 5
-#define PLAYERPOSY (SCREENHEIGHT-2)
+#define PLAYERPOSY (SCREENHEIGHT - 2)
 
 #define BUNKERWIDTH 80
 #define BUNKERHEIGHT 4
 #define BUNKERX 0
-#define BUNKERY (SCREENHEIGHT-8)
-	
+#define BUNKERY (SCREENHEIGHT - 8)
+
 #define ALIENS_MAX_NUMBER_X 10
-#define ALIENS_MAX_NUMBER_Y 5	
+#define ALIENS_MAX_NUMBER_Y 5
 
 #define UFOWIDTH 5
 #define UFOPOSY 0
 
-	
 void graphicEngineInit();
-	
+
 void aliensClear(int x, int y, int wid, int hgt);
 void aliensDisplay(int x, int y, int wid, int hgt);
 void aliensMissileClear(int x, int y);
@@ -72,7 +70,7 @@ void ufoClear(int x, int y);
 void ufoDisplay(int x, int y);
 void ufoRefresh();
 
-void statusDisplay(int level, int score, int lives);	
+void statusDisplay(int level, int score, int lives);
 void refreshScreen();
 
 #endif
