@@ -1,0 +1,26 @@
+name: build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build project
+    strategy:
+      matrix:
+        config:
+        - { os: ubuntu-latest, cc: "gcc" }
+        - { os: ubuntu-latest, cc: "clang" }
+    runs-on: ${{ matrix.config.os }}
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install libncurses-dev
+      - name: Build with ${{ matrix.config.cc }} on ${{ matrix.config.os }}
+        env:
+          CC: ${{ matrix.config.cc }}
+        run: |
+          cmake -B cmake_build
+          cmake --build cmake_build -j2
+
